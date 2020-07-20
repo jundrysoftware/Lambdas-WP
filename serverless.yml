@@ -23,3 +23,24 @@ functions:
         method: POST
         name: PersonalAPI
         path: /default/whatsapp
+  EmailChecker:
+    handler: AutomationServices/AutoMailChecker/checker.start
+    name: AutomationServices-EmailChecker-${opt:stage}
+    events: 
+      - schedule: 
+        rate: rate(10 minutes)
+        name: 'cw-start-email-checker'
+    environment: 
+      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
+      MONGO_PORT: '27017'
+      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
+      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
+      MONGO_SSL: true
+      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+      SUBJECT_SEARCHED: 'Servicio de Alertas y Notificaciones Bancolombia'
+      BODY_BASE_SEARCHED: 'Bancolombia le informa'
+      BODY_SKIPPED_PHRASE: 'Bancolombia le informa que su factura inscrita'
+      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
+      EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
+      NODE_ENV: ${opt:stage}
+    
