@@ -6,16 +6,20 @@ const moment = require('moment')
 const { create: createNewPrePay } = require('./src/controllers/prePayment')
 const configs = require('./configs')
 const {
-    SUBJECT_SEARCHED
+    SUBJECT_SEARCHED,
+    MINUTES_AGO_SEARCH = '20'
 } = process.env
 
-const start = async () =>{
+const start = async (event, context) =>{
     const connection = await imaps.connect(config)
-    console.log('=== STARTING SOMETHING ===',new Date())
     await connection.openBox('INBOX')
     const date = moment()
-    .subtract('10', 'minutes')
+    .subtract(MINUTES_AGO_SEARCH, 'minutes')
     .format()
+    console.log('=== STARTING SOMETHING ===', {
+        startDate: date, 
+        now: moment().format()
+    })
     const GranularData = []
     const searchValues =  [
         'UNSEEN',
@@ -42,10 +46,9 @@ const start = async () =>{
         }
     }
     await createNewPrePay(GranularData)
-    console.log(new Date())
     console.log('==== FINISHED with ' + GranularData.length + ' Messages');
 
-    return process.exit()
+    return context.done(null);
 }
 module.exports = {
     start

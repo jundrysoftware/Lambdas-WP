@@ -28,7 +28,8 @@ functions:
     name: AutomationServices-EmailChecker-${opt:stage}
     events: 
       - schedule: 
-        rate: rate(10 minutes)
+        rate: rate(20 minutes)
+        enabled: true
         name: 'cw-start-email-checker'
     environment: 
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
