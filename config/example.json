@@ -1,0 +1,7 @@
+{
+    "MONGO_HOST": "cluster0-shard-00-02-abc123.mongodb.net:27017",
+    "MONGO_PORT": 27017,
+    "MONGO_SECRET": "password",
+    "MONGO_SET"	: "replicas_only",
+    "MONGO_USER": "FlavioAandres"
+}
