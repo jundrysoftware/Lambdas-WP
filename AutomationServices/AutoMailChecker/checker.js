@@ -3,15 +3,17 @@ const imaps = require('imap-simple')
 const utils = require('./utils')
 const config = require('./configs')
 const moment = require('moment')
-const { create: createNewPrePay } = require('./src/controllers/prePayment')
+const { create: createNewPrePay } = require('../../shared/database/repos/prePayment')
 const configs = require('./configs')
 const {
     SUBJECT_SEARCHED,
-    MINUTES_AGO_SEARCH = '20'
+    MINUTES_AGO_SEARCH = '10080'
 } = process.env
 
 const start = async (event, context) =>{
+    console.info('Connecting to email')
     const connection = await imaps.connect(config)
+    console.info('Openning Inbox')
     await connection.openBox('INBOX')
     const date = moment()
     .subtract(MINUTES_AGO_SEARCH, 'minutes')

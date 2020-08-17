@@ -1,36 +1,85 @@
 service: whatsapPostMessage
+plugins:
+  - serverless-offline
 provider:
   name: aws
   runtime: nodejs12.x
   stage: test
+  memorySize: 512 # optional, in MB, default is 1024
+  timeout: 15 # optional, in seconds, default is 6
 region: us-east-1
 functions:
   TwilioIncommingMessage:
-    handler: POST-whatsapp/Functions/handlerIncommingMessage.handler
+    handler: Personal-Interfaces/Functions/handlerIncommingMessage.handler
     name: TwilioIncommingMessage-lambda-${opt:stage}
-    package: 
-      - POST-whatsapp/*
     environment: 
       NODE_ENV: ${opt:stage}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
+      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
       MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
       MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       MONGO_SSL: true
     events: 
       - httpApi: 
         method: POST
         name: PersonalAPI
         path: /default/whatsapp
+  GetPrepayments:
+    handler: Personal-Interfaces/Functions/PrePayments.get
+    name: PrepaymentsRepo-get-${opt:stage}
+    environment: 
+      NODE_ENV: ${opt:stage}
+      MONGO_PORT: 27017
+      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
+      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
+      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
+      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
+      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
+      MONGO_SSL: true
+    events: 
+      - http: 
+          path: /default/prepayments
+          method: GET
+          cors: 
+            - enabled: true
+            - origin: '*'
+            - headers:  'Access-Control-Allow-Origin'
+          name: PersonalAPI
+  PutPrepayments:
+    handler: Personal-Interfaces/Functions/PrePayments.put
+    name: PrepaymentsRepo-put-${opt:stage}
+    environment: 
+      NODE_ENV: ${opt:stage}
+      MONGO_PORT: 27017
+      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
+      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
+      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
+      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
+      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
+      MONGO_SSL: true
+    events: 
+      - http: 
+          path: /default/prepayments
+          method: PUT
+          cors: 
+            - enabled: true
+            - origin: '*'
+            - headers:  'Access-Control-Allow-Origin: *'
+          name: PersonalAPI
   EmailChecker:
     handler: AutomationServices/AutoMailChecker/checker.start
     name: AutomationServices-EmailChecker-${opt:stage}
     events: 
       - schedule: 
+        name: 'cw-start-email-checker'
+        description: 'Function to connecto to Gmail :D'
         rate: rate(20 minutes)
         enabled: true
-        name: 'cw-start-email-checker'
     environment: 
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_PORT: '27017'

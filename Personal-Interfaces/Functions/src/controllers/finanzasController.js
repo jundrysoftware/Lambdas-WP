@@ -1,5 +1,5 @@
-const mongodb = require('../database/mongo')
-const boxflowModel = require('../models/boxflow')
+const mongodb = require('../../../../shared/database/mongo')
+const boxflowModel = require('../../../../shared/models/boxflow')
 const moment = require('moment')
 
 module.exports = {
@@ -31,8 +31,6 @@ module.exports = {
 
         try {
             let result = await boxflowModel.update(query, update)
-            console.log(JSON.stringify(result))
-            // await mongodb.destroy()
         } catch (error) {
             console.log(error)
             return "Something saving in database"
@@ -68,9 +66,8 @@ module.exports = {
         }
 
         try {
-            let result = await boxflowModel.create(object)
-            console.log(JSON.stringify(result))
-            // await mongodb.destroy()
+            await boxflowModel.create(object)
+            await mongodb.destroy()
         } catch (error) {
             console.log(error)
             return "Something saving in database"
@@ -92,11 +89,12 @@ module.exports = {
 
         console.log(task, category, timeNumber, long);
 
+        if (category == 'help')
+            return "Run this command using: \n ``` Cash <Category> <#> <Days|weeks|month> ```"
+
         if (!timeNumber || !long || !category)
             return "Timming ago fails"
 
-        if (category == 'help')
-            return "Run this command using: \n ``` Cash <Category> <#> <Days|weeks|month> ```"
         const fromAux = category
         if (category.indexOf('/') >= 0)
             category = category.split('/').map(cat => new RegExp(cat, 'i'))
@@ -114,8 +112,9 @@ module.exports = {
         }
 
         try {
-            // return JSON.stringify(query)
+            console.log('waiting for data')
             let result = await boxflowModel.find(query, { description: 1, amount: 1, category: 1 })
+            console.log('data received')
             if (!result || !result.length)
                 return "⚠ No encontré datos 🙅‍♀️"
 
@@ -129,6 +128,7 @@ module.exports = {
                 prev += current.amount
                 return prev
             }, 0)
+            await mongodb.destroy()
 
             return data
         } catch (error) {

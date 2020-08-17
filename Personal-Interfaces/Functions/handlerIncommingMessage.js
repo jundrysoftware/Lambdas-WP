@@ -4,7 +4,6 @@ const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('./src/utils/bodyParser')
 const cashController = require('./src/controllers/finanzasController')
 
-
 const handler = async (event, context) => {
   try {
     let object
@@ -27,8 +26,6 @@ const handler = async (event, context) => {
     if (object.Body.toLowerCase().indexOf("reminder") >= 0) {
       twiml.message("🍁🍁🍁🍁 \nReminder is not avilable yet, we're working hard with some drugs to give you this soon!! ")
     } else if (object.Body.toLowerCase().indexOf("total+less") >= 0) {
-      console.log('here');
-
       let response = await cashController.substractCategories(object)
       twiml.message(response)
     } else if (object.Body.toLowerCase().indexOf("total+sum") >= 0) {

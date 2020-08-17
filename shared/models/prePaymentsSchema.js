@@ -5,6 +5,7 @@ const schema = {
     amount: { type: Number, required: true },
     text: {type: String, required: true}, 
     isAccepted: { type: Boolean, default: false},
+    isHidden: { type: Boolean, default: false},
     createdAt: { type: Date, },
 }
 
