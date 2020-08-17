@@ -22,11 +22,6 @@ functions:
       MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       MONGO_SSL: true
-    events: 
-      - httpApi: 
-        method: POST
-        name: PersonalAPI
-        path: /default/whatsapp
   GetPrepayments:
     handler: Personal-Interfaces/Functions/PrePayments.get
     name: PrepaymentsRepo-get-${opt:stage}

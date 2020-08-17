@@ -96,8 +96,11 @@ module.exports = {
             return "Timming ago fails"
 
         const fromAux = category
+
         if (category.indexOf('/') >= 0)
             category = category.split('/').map(cat => new RegExp(cat, 'i'))
+        else if (category === '*')
+            category = []
         else
             category = [new RegExp(category, 'i')]
 
@@ -105,16 +108,18 @@ module.exports = {
 
         let query = {
             phoneNumber: From,
-            category: { $in: category },
             createdDate: {
                 $gte: new Date(date)
             }
         }
+        
+        if(category.length)
+            query.category = { $in: category }
+        
 
         try {
-            console.log('waiting for data')
             let result = await boxflowModel.find(query, { description: 1, amount: 1, category: 1 })
-            console.log('data received')
+
             if (!result || !result.length)
                 return "⚠ No encontré datos 🙅‍♀️"
 
