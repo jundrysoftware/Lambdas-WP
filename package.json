@@ -11,14 +11,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "twilio": "^3.39.1",
     "cheerio": "^1.0.0-rc.3",
+    "dotenv": "^8.2.0",
     "imap-simple": "^5.0.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "mailparser": "^2.7.7",
     "moment": "^2.27.0",
-    "mongoose": "^5.9.25"
+    "mongoose": "^5.9.25",
+    "twilio": "^3.39.1"
   },
   "devDependencies": {
     "serverless": "^1.78.1",

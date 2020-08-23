@@ -44,6 +44,28 @@ functions:
             - origin: '*'
             - headers:  'Access-Control-Allow-Origin'
           name: PersonalAPI
+  GetStats:
+    handler: Personal-Interfaces/Functions/boxflow.get
+    name: StatsRepo-get-${opt:stage}
+    environment: 
+      NODE_ENV: ${opt:stage}
+      MONGO_PORT: 27017
+      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
+      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
+      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
+      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
+      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
+      MONGO_SSL: true
+    events: 
+      - http: 
+          path: /default/boxflow/stats
+          method: GET
+          cors: 
+            - enabled: true
+            - origin: '*'
+            - headers:  'Access-Control-Allow-Origin'
+          name: PersonalAPI
   PutPrepayments:
     handler: Personal-Interfaces/Functions/PrePayments.put
     name: PrepaymentsRepo-put-${opt:stage}
