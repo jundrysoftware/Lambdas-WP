@@ -46,7 +46,13 @@ const handler = async (event, context) => {
       `)
     }
     let xml = twiml.toString()
-    context.done(null, { body: xml });
+    context.done(null, { 
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'text/xml',
+      },
+      body: xml
+    });
   } catch (e) {
     console.log(e)
     return "something fails with this shit!"

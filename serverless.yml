@@ -1,4 +1,4 @@
-service: whatsapPostMessage
+service: personal-interface
 plugins:
   - serverless-offline
 provider:
@@ -22,6 +22,16 @@ functions:
       MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       MONGO_SSL: true
+    events: 
+      - http: 
+          path: '/whatsapp/webhook/'
+          method: 'post'
+          cors: 
+            - enabled: true
+            - origin: '*'
+            - headers:  
+              - Content-Type
+              - Transfer-encoding
   GetPrepayments:
     handler: Personal-Interfaces/Functions/PrePayments.get
     name: PrepaymentsRepo-get-${opt:stage}
@@ -37,35 +47,12 @@ functions:
       MONGO_SSL: true
     events: 
       - http: 
-          path: /default/prepayments
+          path: /prepayments
           method: GET
           cors: 
             - enabled: true
             - origin: '*'
             - headers:  'Access-Control-Allow-Origin'
-          name: PersonalAPI
-  GetStats:
-    handler: Personal-Interfaces/Functions/boxflow.get
-    name: StatsRepo-get-${opt:stage}
-    environment: 
-      NODE_ENV: ${opt:stage}
-      MONGO_PORT: 27017
-      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
-      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
-      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
-      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
-      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
-      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
-      MONGO_SSL: true
-    events: 
-      - http: 
-          path: /default/boxflow/stats
-          method: GET
-          cors: 
-            - enabled: true
-            - origin: '*'
-            - headers:  'Access-Control-Allow-Origin'
-          name: PersonalAPI
   PutPrepayments:
     handler: Personal-Interfaces/Functions/PrePayments.put
     name: PrepaymentsRepo-put-${opt:stage}
@@ -81,13 +68,33 @@ functions:
       MONGO_SSL: true
     events: 
       - http: 
-          path: /default/prepayments
+          path: /prepayments
           method: PUT
           cors: 
             - enabled: true
             - origin: '*'
-            - headers:  'Access-Control-Allow-Origin: *'
-          name: PersonalAPI
+            - headers:  'Access-Control-Allow-Origin'
+  GetStats:
+    handler: Personal-Interfaces/Functions/BoxFlow.get
+    name: StatsRepo-get-${opt:stage}
+    environment: 
+      NODE_ENV: ${opt:stage}
+      MONGO_PORT: 27017
+      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
+      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
+      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
+      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
+      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
+      MONGO_SSL: true
+    events: 
+      - http: 
+          path: /boxflow/stats
+          method: GET
+          cors: 
+            - enabled: true
+            - origin: '*'
+            - headers:  'Access-Control-Allow-Origin'
   EmailChecker:
     handler: AutomationServices/AutoMailChecker/checker.start
     name: AutomationServices-EmailChecker-${opt:stage}

@@ -1,8 +1,8 @@
 {
   "service": {
-    "service": "whatsapPostMessage",
+    "service": "personal-interface",
     "serviceObject": {
-      "name": "whatsapPostMessage"
+      "name": "personal-interface"
     },
     "provider": {
       "stage": "test",
@@ -127,7 +127,7 @@
                     "Fn::Join": [
                       "-",
                       [
-                        "whatsapPostMessage",
+                        "personal-interface",
                         "test",
                         "lambda"
                       ]
@@ -192,7 +192,7 @@
                 "Fn::Join": [
                   "-",
                   [
-                    "whatsapPostMessage",
+                    "personal-interface",
                     "test",
                     {
                       "Ref": "AWS::Region"
@@ -210,7 +210,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/whatsapPostMessage/test/1598173870150-2020-08-23T09:11:10.150Z/whatsapPostMessage.zip"
+                "S3Key": "serverless/personal-interface/test/1598670542260-2020-08-29T03:09:02.260Z/personal-interface.zip"
               },
               "FunctionName": "TwilioIncommingMessage-lambda-test",
               "Handler": "Personal-Interfaces/Functions/handlerIncommingMessage.handler",
@@ -240,14 +240,14 @@
               "TwilioIncommingMessageLogGroup"
             ]
           },
-          "TwilioIncommingMessageLambdaVersion6nCEe3rHEyibTylIzLX9dSkm9d8EazLZ8QWgnx4I": {
+          "TwilioIncommingMessageLambdaVersionfz05sZFKPuhQujU4t4S2SCQMQMeKjPfnY8UDLbDRQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "TwilioIncommingMessageLambdaFunction"
               },
-              "CodeSha256": "K3/Owyi3kcGB/p3O9kuEjfT98Ln/VjECygdXjhofSpc="
+              "CodeSha256": "h19KOVolYlN4FsVeCCBHIbjnqYQiWOQCasn95o1nhug="
             }
           },
           "GetPrepaymentsLambdaFunction": {
@@ -257,7 +257,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/whatsapPostMessage/test/1598173870150-2020-08-23T09:11:10.150Z/whatsapPostMessage.zip"
+                "S3Key": "serverless/personal-interface/test/1598670542260-2020-08-29T03:09:02.260Z/personal-interface.zip"
               },
               "FunctionName": "PrepaymentsRepo-get-test",
               "Handler": "Personal-Interfaces/Functions/PrePayments.get",
@@ -287,14 +287,14 @@
               "GetPrepaymentsLogGroup"
             ]
           },
-          "GetPrepaymentsLambdaVersionyiey92vtOryQ3msC5IzoaZkBD3JtsxiEPGvnX4aqq5c": {
+          "GetPrepaymentsLambdaVersionuEC8xfpqOpx0yKEBXgaIEmGW2YPfhvGjcmRHvbecWQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetPrepaymentsLambdaFunction"
               },
-              "CodeSha256": "K3/Owyi3kcGB/p3O9kuEjfT98Ln/VjECygdXjhofSpc="
+              "CodeSha256": "h19KOVolYlN4FsVeCCBHIbjnqYQiWOQCasn95o1nhug="
             }
           },
           "GetStatsLambdaFunction": {
@@ -304,10 +304,10 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/whatsapPostMessage/test/1598173870150-2020-08-23T09:11:10.150Z/whatsapPostMessage.zip"
+                "S3Key": "serverless/personal-interface/test/1598670542260-2020-08-29T03:09:02.260Z/personal-interface.zip"
               },
               "FunctionName": "StatsRepo-get-test",
-              "Handler": "Personal-Interfaces/Functions/boxflow.get",
+              "Handler": "Personal-Interfaces/Functions/BoxFlow.get",
               "MemorySize": 512,
               "Role": {
                 "Fn::GetAtt": [
@@ -334,14 +334,14 @@
               "GetStatsLogGroup"
             ]
           },
-          "GetStatsLambdaVersion2QE2SolvkH9ic3gR9X7eNk87L9ASlSXWMgjABlSJE": {
+          "GetStatsLambdaVersionilCimNC3HG4hOuvjJuBHTaH080rnexCAzaL3mQNmnI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetStatsLambdaFunction"
               },
-              "CodeSha256": "K3/Owyi3kcGB/p3O9kuEjfT98Ln/VjECygdXjhofSpc="
+              "CodeSha256": "h19KOVolYlN4FsVeCCBHIbjnqYQiWOQCasn95o1nhug="
             }
           },
           "PutPrepaymentsLambdaFunction": {
@@ -351,7 +351,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/whatsapPostMessage/test/1598173870150-2020-08-23T09:11:10.150Z/whatsapPostMessage.zip"
+                "S3Key": "serverless/personal-interface/test/1598670542260-2020-08-29T03:09:02.260Z/personal-interface.zip"
               },
               "FunctionName": "PrepaymentsRepo-put-test",
               "Handler": "Personal-Interfaces/Functions/PrePayments.put",
@@ -381,14 +381,14 @@
               "PutPrepaymentsLogGroup"
             ]
           },
-          "PutPrepaymentsLambdaVersionu7JqLDqgpZNKr3iFlH8m050c5YYe8bebqAe2LMCAVfk": {
+          "PutPrepaymentsLambdaVersionVBQtIDLIR9383JbPAonoj0Qw7JkOf9q89rza8AfKjs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PutPrepaymentsLambdaFunction"
               },
-              "CodeSha256": "K3/Owyi3kcGB/p3O9kuEjfT98Ln/VjECygdXjhofSpc="
+              "CodeSha256": "h19KOVolYlN4FsVeCCBHIbjnqYQiWOQCasn95o1nhug="
             }
           },
           "EmailCheckerLambdaFunction": {
@@ -398,7 +398,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/whatsapPostMessage/test/1598173870150-2020-08-23T09:11:10.150Z/whatsapPostMessage.zip"
+                "S3Key": "serverless/personal-interface/test/1598670542260-2020-08-29T03:09:02.260Z/personal-interface.zip"
               },
               "FunctionName": "AutomationServices-EmailChecker-test",
               "Handler": "AutomationServices/AutoMailChecker/checker.start",
@@ -432,20 +432,20 @@
               "EmailCheckerLogGroup"
             ]
           },
-          "EmailCheckerLambdaVersionxHHx8nYJ8xRpiamabyT89sN2y10ROmdPYKjA6VA8": {
+          "EmailCheckerLambdaVersion0Agu2bVhbsxUyR2Gp0rmK1QAt3V8SPNHYzfGj8RzWA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "EmailCheckerLambdaFunction"
               },
-              "CodeSha256": "K3/Owyi3kcGB/p3O9kuEjfT98Ln/VjECygdXjhofSpc="
+              "CodeSha256": "h19KOVolYlN4FsVeCCBHIbjnqYQiWOQCasn95o1nhug="
             }
           },
           "ApiGatewayRestApi": {
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
-              "Name": "test-whatsapPostMessage",
+              "Name": "test-personal-interface",
               "EndpointConfiguration": {
                 "Types": [
                   "EDGE"
@@ -454,7 +454,7 @@
               "Policy": ""
             }
           },
-          "ApiGatewayResourceDefault": {
+          "ApiGatewayResourceWhatsapp": {
             "Type": "AWS::ApiGateway::Resource",
             "Properties": {
               "ParentId": {
@@ -463,17 +463,32 @@
                   "RootResourceId"
                 ]
               },
-              "PathPart": "default",
+              "PathPart": "whatsapp",
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
             }
           },
-          "ApiGatewayResourceDefaultPrepayments": {
+          "ApiGatewayResourceWhatsappWebhook": {
             "Type": "AWS::ApiGateway::Resource",
             "Properties": {
               "ParentId": {
-                "Ref": "ApiGatewayResourceDefault"
+                "Ref": "ApiGatewayResourceWhatsapp"
+              },
+              "PathPart": "webhook",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourcePrepayments": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
               },
               "PathPart": "prepayments",
               "RestApiId": {
@@ -481,11 +496,14 @@
               }
             }
           },
-          "ApiGatewayResourceDefaultBoxflow": {
+          "ApiGatewayResourceBoxflow": {
             "Type": "AWS::ApiGateway::Resource",
             "Properties": {
               "ParentId": {
-                "Ref": "ApiGatewayResourceDefault"
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
               },
               "PathPart": "boxflow",
               "RestApiId": {
@@ -493,11 +511,11 @@
               }
             }
           },
-          "ApiGatewayResourceDefaultBoxflowStats": {
+          "ApiGatewayResourceBoxflowStats": {
             "Type": "AWS::ApiGateway::Resource",
             "Properties": {
               "ParentId": {
-                "Ref": "ApiGatewayResourceDefaultBoxflow"
+                "Ref": "ApiGatewayResourceBoxflow"
               },
               "PathPart": "stats",
               "RestApiId": {
@@ -505,7 +523,97 @@
               }
             }
           },
-          "ApiGatewayMethodPersonalAPIOptions": {
+          "ApiGatewayMethodWhatsappWebhookOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceWhatsappWebhook"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodPrepaymentsOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,PUT,GET'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourcePrepayments"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodBoxflowStatsOptions": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
               "AuthorizationType": "NONE",
@@ -543,20 +651,106 @@
                 ]
               },
               "ResourceId": {
-                "Ref": "ApiGatewayResourceDefaultBoxflowStats"
+                "Ref": "ApiGatewayResourceBoxflowStats"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
             }
           },
-          "ApiGatewayMethodPersonalAPIGet": {
+          "ApiGatewayMethodWhatsappWebhookPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceWhatsappWebhook"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "TwilioIncommingMessageLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayMethodPrepaymentsGet": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
               "HttpMethod": "GET",
               "RequestParameters": {},
               "ResourceId": {
-                "Ref": "ApiGatewayResourceDefaultBoxflowStats"
+                "Ref": "ApiGatewayResourcePrepayments"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": false,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "GetPrepaymentsLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayMethodBoxflowStatsGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceBoxflowStats"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
@@ -593,13 +787,13 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayMethodPersonalAPIPut": {
+          "ApiGatewayMethodPrepaymentsPut": {
             "Type": "AWS::ApiGateway::Method",
             "Properties": {
               "HttpMethod": "PUT",
               "RequestParameters": {},
               "ResourceId": {
-                "Ref": "ApiGatewayResourceDefaultPrepayments"
+                "Ref": "ApiGatewayResourcePrepayments"
               },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
@@ -636,7 +830,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1598173836646": {
+          "ApiGatewayDeployment1598670510374": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -645,12 +839,51 @@
               "StageName": "test"
             },
             "DependsOn": [
-              "ApiGatewayMethodPersonalAPIOptions",
-              "ApiGatewayMethodPersonalAPIOptions",
-              "ApiGatewayMethodPersonalAPIGet",
-              "ApiGatewayMethodPersonalAPIGet",
-              "ApiGatewayMethodPersonalAPIPut"
+              "ApiGatewayMethodWhatsappWebhookOptions",
+              "ApiGatewayMethodPrepaymentsOptions",
+              "ApiGatewayMethodBoxflowStatsOptions",
+              "ApiGatewayMethodWhatsappWebhookPost",
+              "ApiGatewayMethodPrepaymentsGet",
+              "ApiGatewayMethodBoxflowStatsGet",
+              "ApiGatewayMethodPrepaymentsPut"
             ]
+          },
+          "TwilioIncommingMessageLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "TwilioIncommingMessageLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
           },
           "GetPrepaymentsLambdaPermissionApiGateway": {
             "Type": "AWS::Lambda::Permission",
@@ -773,31 +1006,31 @@
           "TwilioIncommingMessageLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "TwilioIncommingMessageLambdaVersion6nCEe3rHEyibTylIzLX9dSkm9d8EazLZ8QWgnx4I"
+              "Ref": "TwilioIncommingMessageLambdaVersionfz05sZFKPuhQujU4t4S2SCQMQMeKjPfnY8UDLbDRQ"
             }
           },
           "GetPrepaymentsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetPrepaymentsLambdaVersionyiey92vtOryQ3msC5IzoaZkBD3JtsxiEPGvnX4aqq5c"
+              "Ref": "GetPrepaymentsLambdaVersionuEC8xfpqOpx0yKEBXgaIEmGW2YPfhvGjcmRHvbecWQ"
             }
           },
           "GetStatsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetStatsLambdaVersion2QE2SolvkH9ic3gR9X7eNk87L9ASlSXWMgjABlSJE"
+              "Ref": "GetStatsLambdaVersionilCimNC3HG4hOuvjJuBHTaH080rnexCAzaL3mQNmnI"
             }
           },
           "PutPrepaymentsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PutPrepaymentsLambdaVersionu7JqLDqgpZNKr3iFlH8m050c5YYe8bebqAe2LMCAVfk"
+              "Ref": "PutPrepaymentsLambdaVersionVBQtIDLIR9383JbPAonoj0Qw7JkOf9q89rza8AfKjs"
             }
           },
           "EmailCheckerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "EmailCheckerLambdaVersionxHHx8nYJ8xRpiamabyT89sN2y10ROmdPYKjA6VA8"
+              "Ref": "EmailCheckerLambdaVersion0Agu2bVhbsxUyR2Gp0rmK1QAt3V8SPNHYzfGj8RzWA"
             }
           },
           "ServiceEndpoint": {
@@ -912,13 +1145,35 @@
           "MONGO_USER": "worker-email-user",
           "MONGO_SSL": true
         },
-        "events": [],
+        "events": [
+          {
+            "http": {
+              "path": "whatsapp/webhook",
+              "method": "post",
+              "cors": [
+                {
+                  "enabled": true
+                },
+                {
+                  "origin": "*"
+                },
+                {
+                  "headers": [
+                    "Content-Type",
+                    "Transfer-encoding"
+                  ]
+                }
+              ],
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
         "package": {},
         "memory": 512,
         "timeout": 15,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "TwilioIncommingMessageLambdaVersion6nCEe3rHEyibTylIzLX9dSkm9d8EazLZ8QWgnx4I"
+        "versionLogicalId": "TwilioIncommingMessageLambdaVersionfz05sZFKPuhQujU4t4S2SCQMQMeKjPfnY8UDLbDRQ"
       },
       "GetPrepayments": {
         "handler": "Personal-Interfaces/Functions/PrePayments.get",
@@ -936,7 +1191,7 @@
         "events": [
           {
             "http": {
-              "path": "default/prepayments",
+              "path": "prepayments",
               "method": "get",
               "cors": [
                 {
@@ -949,7 +1204,6 @@
                   "headers": "Access-Control-Allow-Origin"
                 }
               ],
-              "name": "PersonalAPI",
               "integration": "AWS_PROXY"
             }
           }
@@ -959,10 +1213,10 @@
         "timeout": 15,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "GetPrepaymentsLambdaVersionyiey92vtOryQ3msC5IzoaZkBD3JtsxiEPGvnX4aqq5c"
+        "versionLogicalId": "GetPrepaymentsLambdaVersionuEC8xfpqOpx0yKEBXgaIEmGW2YPfhvGjcmRHvbecWQ"
       },
       "GetStats": {
-        "handler": "Personal-Interfaces/Functions/boxflow.get",
+        "handler": "Personal-Interfaces/Functions/BoxFlow.get",
         "name": "StatsRepo-get-test",
         "environment": {
           "NODE_ENV": "test",
@@ -977,7 +1231,7 @@
         "events": [
           {
             "http": {
-              "path": "default/boxflow/stats",
+              "path": "boxflow/stats",
               "method": "get",
               "cors": [
                 {
@@ -990,7 +1244,6 @@
                   "headers": "Access-Control-Allow-Origin"
                 }
               ],
-              "name": "PersonalAPI",
               "integration": "AWS_PROXY"
             }
           }
@@ -1000,7 +1253,7 @@
         "timeout": 15,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "GetStatsLambdaVersion2QE2SolvkH9ic3gR9X7eNk87L9ASlSXWMgjABlSJE"
+        "versionLogicalId": "GetStatsLambdaVersionilCimNC3HG4hOuvjJuBHTaH080rnexCAzaL3mQNmnI"
       },
       "PutPrepayments": {
         "handler": "Personal-Interfaces/Functions/PrePayments.put",
@@ -1018,7 +1271,7 @@
         "events": [
           {
             "http": {
-              "path": "default/prepayments",
+              "path": "prepayments",
               "method": "put",
               "cors": [
                 {
@@ -1028,10 +1281,9 @@
                   "origin": "*"
                 },
                 {
-                  "headers": "Access-Control-Allow-Origin: *"
+                  "headers": "Access-Control-Allow-Origin"
                 }
               ],
-              "name": "PersonalAPI",
               "integration": "AWS_PROXY"
             }
           }
@@ -1041,7 +1293,7 @@
         "timeout": 15,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "PutPrepaymentsLambdaVersionu7JqLDqgpZNKr3iFlH8m050c5YYe8bebqAe2LMCAVfk"
+        "versionLogicalId": "PutPrepaymentsLambdaVersionVBQtIDLIR9383JbPAonoj0Qw7JkOf9q89rza8AfKjs"
       },
       "EmailChecker": {
         "handler": "AutomationServices/AutoMailChecker/checker.start",
@@ -1074,16 +1326,16 @@
         "timeout": 15,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "EmailCheckerLambdaVersionxHHx8nYJ8xRpiamabyT89sN2y10ROmdPYKjA6VA8"
+        "versionLogicalId": "EmailCheckerLambdaVersion0Agu2bVhbsxUyR2Gp0rmK1QAt3V8SPNHYzfGj8RzWA"
       }
     },
     "serviceFilename": "serverless.yml",
     "layers": {},
     "isDashboardMonitoringPreconfigured": false,
-    "artifact": "C:\\Lambdas-WP\\.serverless\\whatsapPostMessage.zip"
+    "artifact": "C:\\Lambdas-WP\\.serverless\\personal-interface.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/whatsapPostMessage/test/1598173870150-2020-08-23T09:11:10.150Z",
-    "artifact": "whatsapPostMessage.zip"
+    "artifactDirectoryName": "serverless/personal-interface/test/1598670542260-2020-08-29T03:09:02.260Z",
+    "artifact": "personal-interface.zip"
   }
 }
