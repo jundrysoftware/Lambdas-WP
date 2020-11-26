@@ -50,7 +50,7 @@ const start = async (event, context) => {
                     let thenum = res.match(/(\b\d+(?:[\.,]\d+)?\b)/g, "")
                     thenum = thenum[0].replace(/\D/g, "")
                     GranularData.push({
-                        bank: bank._id,
+                        bank: bank.name,
                         amount: +thenum,
                         text: res,
                         createdBy: 'AUTO_EMAIL_SERVICE',
