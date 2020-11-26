@@ -7,7 +7,6 @@ provider:
   stage: test
   memorySize: 512 # optional, in MB, default is 1024
   timeout: 15 # optional, in seconds, default is 6
-region: us-east-1
 functions:
   TwilioIncommingMessage:
     handler: Personal-Interfaces/Functions/handlerIncommingMessage.handler

@@ -40,21 +40,23 @@ const start = async (event, context) => {
             bodies: ['HEADER', 'TEXT'],
             markSeen: true
         })
-
+        
         if (results.length) {
+
             const messages = await utils.readRawEmail(results)
             for (const message of messages) {
                 for (const filter of bank.filters) {
-                    const res = utils.search(message.html, filter)
-                    if (!res) break;
+                    const res = utils.search(message.html, filter.phrase)
+                    if (!res) continue;
                     let thenum = res.match(/(\b\d+(?:[\.,]\d+)?\b)/g, "")
                     thenum = thenum[0].replace(/\D/g, "")
                     GranularData.push({
                         bank: bank.name,
                         amount: +thenum,
                         text: res,
+                        type: filter.type,
                         createdBy: 'AUTO_EMAIL_SERVICE',
-                        createdAt: new Date()
+                        createdAt: moment(message.date)
                     })
                 }
             }

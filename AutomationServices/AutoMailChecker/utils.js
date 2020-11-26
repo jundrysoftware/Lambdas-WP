@@ -11,6 +11,7 @@ module.exports.readRawEmail = async (emails=[]) =>{
         const subject = mail.parts.filter(part=>part.which==='HEADER')[0].body.subject[0]
 
         parsed.push({
+            date: mail.attributes.date,
             subject: subject,
             html: result.textAsHtml
         })

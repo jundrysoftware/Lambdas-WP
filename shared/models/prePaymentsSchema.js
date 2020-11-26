@@ -4,11 +4,10 @@ const prePaymentSchema = mongoose.Schema(
     {
         bank: {
             type: String,
-            ref: 'Bank',
             index: true,
             required: false,
-            autopopulate: true,
         },
+        type: { type: String, required: false},
         createdBy: { type: String, required: true },
         amount: { type: Number, required: true },
         text: { type: String, required: true },
