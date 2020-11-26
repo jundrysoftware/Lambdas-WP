@@ -104,10 +104,10 @@ functions:
     name: AutomationServices-EmailChecker-${opt:stage}
     events: 
       - schedule: 
-        name: 'cw-start-email-checker'
-        description: 'Function to connecto to Gmail :D'
-        rate: rate(20 minutes)
-        enabled: true
+          name: 'cw-start-email-checker'
+          description: 'Function to connecto to Gmail :D'
+          rate: rate(20 minutes)
+          enabled: true
     environment: 
       MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}

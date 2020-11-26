@@ -9,10 +9,6 @@
 ```js
     {
         "MONGO_HOST": "mongodb+srv://USERNAME:PASSWORD@database.ixvju.mongodb.net/DATABASE?authSource=admin&replicaSet=atlas-f5kbsn-shard-0&w=majority&readPreference=primary&appname=APPNAME&retryWrites=true&ssl=true",
-        "MONGO_PORT": null,
-        "MONGO_SECRET": null,
-        "MONGO_SET"	: null,
-        "MONGO_USER": null,
         "SRV_CONFIG": true // Note the SRV CONFIG flag on
     }
 ```
@@ -29,4 +25,10 @@
         "MONGO_USER": "FlavioAandres",
         "SRV_CONFIG": false // Note the SRV CONFIG flag off
     }
+```
+
+## Deploy 
+
+```bash
+sls deploy --stage [DEV/TEST/PROD]
 ```
