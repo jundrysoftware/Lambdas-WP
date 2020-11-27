@@ -2,18 +2,18 @@ const boxFlowSchema = require("../../models/boxflow");
 
 module.exports.saveBoxFlow = (boxFlow) => {
   return boxFlowSchema.create({
-    phoneNumber: "whatsapp:+573022939843",
+    phoneNumber: "whatsapp:+573008794497",
     ...boxFlow,
   });
 };
 
 module.exports.getByCategories = () => {
   return boxFlowSchema.aggregate([
-    { $match: { phoneNumber: "whatsapp:+573022939843" } },
+    { $match: { phoneNumber: "whatsapp:+573008794497" } },
     {
         $group: {
             _id: {$toLower: '$category'},
-            purchases: {$addToSet: {'amount': '$amount', date: '$createdDate'} }
+            purchases: {$addToSet: {'amount': '$amount', date: '$createdAt'} }
         }
     },
     {
@@ -28,10 +28,10 @@ module.exports.getByCategories = () => {
 
 module.exports.getByMonth = () => {
   return boxFlowSchema.aggregate([
-    { $match: { phoneNumber: "whatsapp:+573022939843" } },
+    { $match: { phoneNumber: "whatsapp:+573008794497" } },
     {
       $group: {
-        _id: { $substr: ["$createdDate", 0, 7] },
+        _id: { $substr: ["$createdAt", 0, 7] },
         total: { $sum: "$amount" },
       },
     },

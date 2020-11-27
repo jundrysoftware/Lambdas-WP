@@ -2,6 +2,7 @@ const { Schema, model } = require('mongoose')
 
 const schema = {
     phoneNumber: { type: String, required: true },
+    type: {type: String, required: true},
     category: { type: String, required: true },
     secondCategory: { type: String, required: false },
     description: { type: String, required: false },

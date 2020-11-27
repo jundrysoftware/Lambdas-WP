@@ -6,6 +6,10 @@ const moment = require('moment')
 const { create: createNewPrePay } = require('../../shared/database/repos/prePayment')
 const { getBanks } = require('../../shared/database/repos/bank');
 
+String.prototype.splice = function (idx, rem, str) {
+    return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+};
+
 const {
     MINUTES_AGO_SEARCH = '10080'
 } = process.env
@@ -24,10 +28,10 @@ const start = async (event, context) => {
 
         const date = moment()
             .subtract(MINUTES_AGO_SEARCH, 'minutes')
-            .format()
+            .toISOString()
         console.log('=== STARTING SOMETHING ===', {
             startDate: date,
-            now: moment().format()
+            now: moment().toISOString()
         })
         const GranularData = []
 
@@ -40,29 +44,38 @@ const start = async (event, context) => {
             bodies: ['HEADER', 'TEXT'],
             markSeen: true
         })
-        
-        if (results.length) {
 
+
+        if (results.length) {
             const messages = await utils.readRawEmail(results)
-            for (const message of messages) {
-                for (const filter of bank.filters) {
+            console.log('==== START ' + bank.name + ' with ' + messages.length + ' Messages');
+            for (const filter of bank.filters) {
+                console.log('==== START ' + filter.phrase + ' with ' + messages.length + ' Messages');
+                for (const message of messages) {
                     const res = utils.search(message.html, filter.phrase)
                     if (!res) continue;
-                    let thenum = res.match(/(\b\d+(?:[\.,]\d+)?\b)/g, "")
-                    thenum = thenum[0].replace(/\D/g, "")
+                    let thenum = res.textWithValue.match(/(\b\d+(?:[\.,]\d+)*)/g, "")
+                    thenum = thenum[bank.index_value]
+                    if (thenum.includes(',') && thenum.substring(thenum.indexOf(',') + 1).length === 2) {
+                        const start = thenum.indexOf(',')
+                        thenum = thenum.replace(/\D/g, "").splice(start - 1, start, '.' + thenum.substring(thenum.indexOf(',') + 1))
+                    } else {
+                        thenum = thenum.replace(/\D/g, "")
+                    }
+
                     GranularData.push({
                         bank: bank.name,
-                        amount: +thenum,
-                        text: res,
+                        amount: parseFloat(thenum),
+                        text: res.description,
                         type: filter.type,
                         createdBy: 'AUTO_EMAIL_SERVICE',
-                        createdAt: moment(message.date)
+                        createdAt: moment(message.date).format()
                     })
                 }
             }
         }
         await createNewPrePay(GranularData)
-        console.log('==== FINISHED with ' + GranularData.length + ' Messages');
+        console.log('==== FINISHED ' + bank.name + ' with ' + GranularData.length + ' Messages ' + results.length);
     }
 
     return context.done(null);
