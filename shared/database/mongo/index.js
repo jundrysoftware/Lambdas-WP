@@ -7,23 +7,35 @@ const {
   MONGO_USER,
   MONGO_SECRET,
   MONGO_SET,
+  MONGO_SRV = false,
 } = process.env;
+
 let connection = null;
 
 const connect = () => {
-  if(!connection){
-    connection = mongoose.connect(MONGO_HOST, {
-      port: MONGO_PORT,
-      dbName: MONGO_DATABASE,
-      ssl: !!MONGO_SSL,
-      user: MONGO_USER,
-      pass: MONGO_SECRET,
-      replicaSet: MONGO_SET,
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+  if (!connection) {
+    if (MONGO_SRV) {
+      connection = mongoose.connect(MONGO_HOST, {
+        useCreateIndex: true,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      });
+    } else {
+      connection = mongoose.connect(MONGO_HOST, {
+        port: MONGO_PORT,
+        dbName: MONGO_DATABASE,
+        ssl: !!MONGO_SSL,
+        user: MONGO_USER,
+        pass: MONGO_SECRET,
+        replicaSet: MONGO_SET,
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true,
+      });
+    }
+
   }
-  return connection 
+  return connection
 };
 
 const destroy = () => {

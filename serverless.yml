@@ -7,13 +7,13 @@ provider:
   stage: test
   memorySize: 512 # optional, in MB, default is 1024
   timeout: 15 # optional, in seconds, default is 6
-region: us-east-1
 functions:
   TwilioIncommingMessage:
     handler: Personal-Interfaces/Functions/handlerIncommingMessage.handler
     name: TwilioIncommingMessage-lambda-${opt:stage}
     environment: 
       NODE_ENV: ${opt:stage}
+      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
@@ -37,6 +37,7 @@ functions:
     name: PrepaymentsRepo-get-${opt:stage}
     environment: 
       NODE_ENV: ${opt:stage}
+      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
@@ -58,6 +59,7 @@ functions:
     name: PrepaymentsRepo-put-${opt:stage}
     environment: 
       NODE_ENV: ${opt:stage}
+      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
@@ -79,6 +81,7 @@ functions:
     name: StatsRepo-get-${opt:stage}
     environment: 
       NODE_ENV: ${opt:stage}
+      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
@@ -100,20 +103,18 @@ functions:
     name: AutomationServices-EmailChecker-${opt:stage}
     events: 
       - schedule: 
-        name: 'cw-start-email-checker'
-        description: 'Function to connecto to Gmail :D'
-        rate: rate(20 minutes)
-        enabled: true
+          name: 'cw-start-email-checker'
+          description: 'Function to connecto to Gmail :D'
+          rate: rate(20 minutes)
+          enabled: true
     environment: 
+      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_PORT: '27017'
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
       MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
       MONGO_SSL: true
       MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
-      SUBJECT_SEARCHED: 'Servicio de Alertas y Notificaciones Bancolombia'
-      BODY_BASE_SEARCHED: 'Bancolombia le informa'
-      BODY_SKIPPED_PHRASE: 'Bancolombia le informa que su factura inscrita'
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
       NODE_ENV: ${opt:stage}

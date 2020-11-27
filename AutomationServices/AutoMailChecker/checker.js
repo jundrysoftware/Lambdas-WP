@@ -4,51 +4,66 @@ const utils = require('./utils')
 const config = require('./configs')
 const moment = require('moment')
 const { create: createNewPrePay } = require('../../shared/database/repos/prePayment')
-const configs = require('./configs')
+const { getBanks } = require('../../shared/database/repos/bank');
+
 const {
-    SUBJECT_SEARCHED,
     MINUTES_AGO_SEARCH = '10080'
 } = process.env
 
-const start = async (event, context) =>{
+const start = async (event, context) => {
+    console.info('Getting Banks Config')
+    const banks = await getBanks();
+
     console.info('Connecting to email')
     const connection = await imaps.connect(config)
     console.info('Openning Inbox')
-    await connection.openBox('INBOX')
-    const date = moment()
-    .subtract(MINUTES_AGO_SEARCH, 'minutes')
-    .format()
-    console.log('=== STARTING SOMETHING ===', {
-        startDate: date, 
-        now: moment().format()
-    })
-    const GranularData = []
-    const searchValues =  [
-        'UNSEEN',
-        ['SINCE', date] ,
-        ['SUBJECT', SUBJECT_SEARCHED],
-    ]
-    const results = await connection.search(searchValues, {
-        bodies: ['HEADER', 'TEXT'],
-        markSeen: true
-    })
-    if(results.length){
-        const messages = await utils.readRawEmail(results)
-        for (const message of messages) {
-            const res = utils.searchBancolombia(message.html)
-            if(!res) break;
-            let  thenum = res.replace(/\D/g, "")
-            thenum = thenum.slice(0, thenum.length - 2)
-            GranularData.push({
-                amount: +thenum,
-                text: res,
-                createdBy: 'AUTO_EMAIL_SERVICE',
-                createdAt: new Date()
-            })
+
+    for (const bank of banks) {
+
+        await connection.openBox(bank.folder)
+
+        const date = moment()
+            .subtract(MINUTES_AGO_SEARCH, 'minutes')
+            .format()
+        console.log('=== STARTING SOMETHING ===', {
+            startDate: date,
+            now: moment().format()
+        })
+        const GranularData = []
+
+        const searchValues = [
+            'UNSEEN',
+            ['SINCE', date],
+            ['SUBJECT', bank.subject],
+        ]
+        const results = await connection.search(searchValues, {
+            bodies: ['HEADER', 'TEXT'],
+            markSeen: true
+        })
+        
+        if (results.length) {
+
+            const messages = await utils.readRawEmail(results)
+            for (const message of messages) {
+                for (const filter of bank.filters) {
+                    const res = utils.search(message.html, filter.phrase)
+                    if (!res) continue;
+                    let thenum = res.match(/(\b\d+(?:[\.,]\d+)?\b)/g, "")
+                    thenum = thenum[0].replace(/\D/g, "")
+                    GranularData.push({
+                        bank: bank.name,
+                        amount: +thenum,
+                        text: res,
+                        type: filter.type,
+                        createdBy: 'AUTO_EMAIL_SERVICE',
+                        createdAt: moment(message.date)
+                    })
+                }
+            }
         }
+        await createNewPrePay(GranularData)
+        console.log('==== FINISHED with ' + GranularData.length + ' Messages');
     }
-    await createNewPrePay(GranularData)
-    console.log('==== FINISHED with ' + GranularData.length + ' Messages');
 
     return context.done(null);
 }
