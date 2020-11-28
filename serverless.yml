@@ -8,30 +8,30 @@ provider:
   memorySize: 512 # optional, in MB, default is 1024
   timeout: 15 # optional, in seconds, default is 6
 functions:
-  # TwilioIncommingMessage:
-  #   handler: Personal-Interfaces/Functions/handlerIncommingMessage.handler
-  #   name: TwilioIncommingMessage-lambda-${opt:stage}
-  #   environment: 
-  #     NODE_ENV: ${opt:stage}
-  #     MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
-  #     MONGO_PORT: 27017
-  #     MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
-  #     MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
-  #     MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
-  #     MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
-  #     MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
-  #     BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
-  #     MONGO_SSL: true
-  #   events: 
-  #     - http: 
-  #         path: '/whatsapp/webhook/'
-  #         method: 'post'
-  #         cors: 
-  #           - enabled: true
-  #           - origin: '*'
-  #           - headers:  
-  #             - Content-Type
-  #             - Transfer-encoding
+  TwilioIncommingMessage:
+    handler: Personal-Interfaces/Functions/handlerIncommingMessage.handler
+    name: TwilioIncommingMessage-lambda-${opt:stage}
+    environment: 
+      NODE_ENV: ${opt:stage}
+      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
+      MONGO_PORT: 27017
+      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
+      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
+      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
+      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
+      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
+      MONGO_SSL: true
+    events: 
+      - http: 
+          path: '/whatsapp/webhook/'
+          method: 'post'
+          cors: 
+            - enabled: true
+            - origin: '*'
+            - headers:  
+              - Content-Type
+              - Transfer-encoding
   GetPrepayments:
     handler: Personal-Interfaces/Functions/PrePayments.get
     name: PrepaymentsRepo-get-${opt:stage}
@@ -67,6 +67,7 @@ functions:
       MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
       MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
+      PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
       MONGO_SSL: true
     events: 
       - http: 

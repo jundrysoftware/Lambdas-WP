@@ -22,12 +22,15 @@ const start = async (event, context) => {
     const connection = await imaps.connect(config)
     console.info('Openning Inbox')
 
-    for (const bank of banks) {
+
+
+    for (let index = 0; index < banks.length; index++) {
+        const bank = banks[index];
 
         await connection.openBox(bank.folder)
 
-        const date = moment()
-            .subtract(MINUTES_AGO_SEARCH, 'minutes')
+        const date = moment('2020-01-01')
+            //.subtract(MINUTES_AGO_SEARCH, 'minutes')
             .toISOString()
         console.log('=== STARTING SOMETHING ===', {
             startDate: date,
@@ -36,7 +39,7 @@ const start = async (event, context) => {
         const GranularData = []
 
         const searchValues = [
-            'UNSEEN',
+            //'UNSEEN',
             ['SINCE', date],
             ['SUBJECT', bank.subject],
         ]
@@ -49,13 +52,18 @@ const start = async (event, context) => {
         if (results.length) {
             const messages = await utils.readRawEmail(results)
             console.log('==== START ' + bank.name + ' with ' + messages.length + ' Messages');
-            for (const filter of bank.filters) {
-                console.log('==== START ' + filter.phrase + ' with ' + messages.length + ' Messages');
-                for (const message of messages) {
-                    const res = utils.search(message.html, filter.phrase)
+            for (let index = 0; index < bank.filters.length; index++) {
+                const filter = bank.filters[index];
+                console.log('==== START FILTER' + filter.phrase);
+                for (let index = 0; index < messages.length; index++) {
+                    const message = messages[index];
+
+                    const res = utils.search(message.html, filter.phrase, bank.ignore_phrase, bank.name)
                     if (!res) continue;
                     let thenum = res.textWithValue.match(/(\b\d+(?:[\.,]\d+)*)/g, "")
                     thenum = thenum[bank.index_value]
+
+                    // Check for decimal numbers
                     if (thenum.includes(',') && thenum.substring(thenum.indexOf(',') + 1).length === 2) {
                         const start = thenum.indexOf(',')
                         thenum = thenum.replace(/\D/g, "").splice(start - 1, start, '.' + thenum.substring(thenum.indexOf(',') + 1))
@@ -63,19 +71,24 @@ const start = async (event, context) => {
                         thenum = thenum.replace(/\D/g, "")
                     }
 
-                    GranularData.push({
+                    const prePaymentObj = {
                         bank: bank.name,
                         amount: parseFloat(thenum),
                         text: res.description,
                         type: filter.type,
                         createdBy: 'AUTO_EMAIL_SERVICE',
                         createdAt: moment(message.date).format()
-                    })
+                    }
+
+                    if(GranularData.indexOf(prePaymentObj) === -1){ // Do not enter duplicated values.
+                        GranularData.push(prePaymentObj)
+                    }
                 }
+                console.log('==== FINISHED FILTER' + filter.phrase );
             }
         }
         await createNewPrePay(GranularData)
-        console.log('==== FINISHED ' + bank.name + ' with ' + GranularData.length + ' Messages ' + results.length);
+        console.log('==== FINISHED ' + bank.name + ' with a total of ' + GranularData.length + ' Messages saved');
     }
 
     return context.done(null);

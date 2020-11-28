@@ -20,7 +20,6 @@ const prePaymentSchema = mongoose.Schema(
     }
 )
 
-prePaymentSchema.plugin(require('mongoose-autopopulate'))
 
 
 /**

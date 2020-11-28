@@ -34,30 +34,44 @@ module.exports.readRawEmail = async (emails = []) => {
     return parsed
 }
 
-module.exports.search = (html, filter, skipped_phrase = 'Bancolombia le informa que su factura inscrita') => {
+module.exports.search = (html, filter, skipped_phrase = 'Bancolombia le informa que su factura inscrita', bank_name = "BANCOLOMBIA") => {
     const $ = cheerio.load(html)
     const res = $('p')
-    const value = res.text().trim()
-    if (value.indexOf(filter) > 0) {
-        if (value.indexOf(skipped_phrase) < 0) {
+    const value = res.text().trim().toLowerCase()
+    filter = filter.toLocaleLowerCase()
+    if (value.includes(filter)) {
+        if (skipped_phrase === null || skipped_phrase === undefined || !value.includes(skipped_phrase.toLocaleLowerCase())) { // If the phrase do not includes the skipped phrase
             let description, textWithValue;
+
+            // The fisrt coincidence for the filter phrase
             const first = value.indexOf(filter)
 
-            if (value.indexOf('*', first + 1) > 0) {
-                //BANCOLOMBIA
-                const end = value.indexOf('*', first + 1)
-                description = value.substring(first, end)
-                textWithValue = description
-            } else {
-                // PSE
-                const end = value.indexOf('[http://www.jlnsoftware.com.br', first + 1)
-                description = value.substring(first, end)
-                if (value.toLowerCase().includes('Valor de la Transacción:'.toLocaleLowerCase())){
-                    textWithValue = description.substring(description.toLocaleLowerCase().indexOf('Valor de la Transacción:'.toLocaleLowerCase()))                  
-                } else {
+
+            switch (bank_name) {
+                case "BANCOLOMBIA": {
+                    const end = value.indexOf('*', first + 1)
+                    description = value.substring(first, end)
                     textWithValue = description
+                    break;
                 }
+                case "PSE": {
+                    /**
+                     * I want to keep on the description the company name where the payment was made
+                     * This value is before the value of the transaction, but some transaction at the first match value
+                     * has a CUS (like a uuid) of the transaction, that's why I need to look for the value 'Valor de la Transacción'
+                     */
+                    const end = value.indexOf('[http://www.jlnsoftware.com.br', first + 1)
+                    description = value.substring(first, end).toLowerCase()
+                    const valuePhraseToSearch = 'Valor de la Transacción:'.toLocaleLowerCase()
+                    if (description.includes(valuePhraseToSearch)) {
+                        textWithValue = description.substring(description.indexOf(valuePhraseToSearch))
+                    }
+                    break;
+                }
+                default:
+                    break;
             }
+
             return {
                 description,
                 textWithValue
