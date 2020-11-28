@@ -20,13 +20,12 @@ const start = async (event, context) => {
 
     console.info('Connecting to email')
     const connection = await imaps.connect(config)
-    console.info('Openning Inbox')
-
-
+    
 
     for (let index = 0; index < banks.length; index++) {
         const bank = banks[index];
 
+        console.info(`Openning ${bank.folder}`)
         await connection.openBox(bank.folder)
 
         const date = moment()
@@ -48,13 +47,14 @@ const start = async (event, context) => {
             markSeen: true
         })
 
-
+        // Close Box
+        connection.closeBox()
         if (results.length) {
             const messages = await utils.readRawEmail(results)
             console.log('==== START ' + bank.name + ' with ' + messages.length + ' Messages');
             for (let index = 0; index < bank.filters.length; index++) {
                 const filter = bank.filters[index];
-                console.log('==== START FILTER' + filter.phrase);
+                console.log('==== START FILTER ' + filter.phrase);
                 for (let index = 0; index < messages.length; index++) {
                     const message = messages[index];
 
@@ -84,7 +84,7 @@ const start = async (event, context) => {
                         GranularData.push(prePaymentObj)
                     }
                 }
-                console.log('==== FINISHED FILTER' + filter.phrase );
+                console.log('==== FINISHED FILTER ' + filter.phrase );
             }
         }
         await createNewPrePay(GranularData)
