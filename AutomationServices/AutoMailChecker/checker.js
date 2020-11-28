@@ -29,8 +29,8 @@ const start = async (event, context) => {
 
         await connection.openBox(bank.folder)
 
-        const date = moment('2020-01-01')
-            //.subtract(MINUTES_AGO_SEARCH, 'minutes')
+        const date = moment()
+            .subtract(MINUTES_AGO_SEARCH, 'minutes')
             .toISOString()
         console.log('=== STARTING SOMETHING ===', {
             startDate: date,
@@ -39,7 +39,7 @@ const start = async (event, context) => {
         const GranularData = []
 
         const searchValues = [
-            //'UNSEEN',
+            'UNSEEN',
             ['SINCE', date],
             ['SUBJECT', bank.subject],
         ]
