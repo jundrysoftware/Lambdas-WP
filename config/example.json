@@ -6,5 +6,6 @@
     "MONGO_USER": "FlavioAandres",
     "SRV_CONFIG": false,
     "EMAIL_USERNAME": "user@domain.tld",
-    "EMAIL_PASSWORD": "SECRET"
+    "EMAIL_PASSWORD": "SECRET",
+    "PHONE_NUMBER":"+573000000000"
 }

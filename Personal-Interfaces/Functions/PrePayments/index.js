@@ -34,11 +34,12 @@ module.exports.put = async (event, context, callback) =>{
     description,
     category,
     hide = false,
+    type,
     accepted
   } = JSON.parse(bodyString)
   console.log(JSON.parse(bodyString))
   try {
-    if(!id || !amount || !createdAt || !description || !category) return { statusCode: 400, body: JSON.stringify({message: 'Bad request'})}
+    if(!id || !amount || !createdAt || !description || !category || !type) return { statusCode: 400, body: JSON.stringify({message: 'Bad request'})}
     await connectToMongo()
     const data = await prepaymentsRepo.updatePrepayment({
       id, 
@@ -48,6 +49,7 @@ module.exports.put = async (event, context, callback) =>{
     let resultBox = null
     if(accepted){
       resultBox = await boxFlowRepo.saveBoxFlow({
+        type,
         amount, 
         createdAt, 
         description, 

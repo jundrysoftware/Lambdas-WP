@@ -15,6 +15,7 @@ module.exports = {
         if (!From || !To, !Body) return "Internal Error :trollface:"
 
         let [task, auxTask, categoryFrom, categoryTo] = Body.split("+")
+        
         console.log(task, auxTask, categoryFrom, categoryTo);
 
         if (!categoryFrom || !categoryTo)
@@ -108,7 +109,7 @@ module.exports = {
 
         let query = {
             phoneNumber: From,
-            createdDate: {
+            createdAt: {
                 $gte: new Date(date)
             }
         }
@@ -172,7 +173,7 @@ module.exports = {
         let query = {
             phoneNumber: From,
             category: { $in: category },
-            createdDate: {
+            createdAt: {
                 $gte: new Date(date)
             }
         }
@@ -224,7 +225,7 @@ module.exports = {
         let query = {
             phoneNumber: From,
             category: { $in: fromCategory },
-            createdDate: {
+            createdAt: {
                 $gte: new Date(date)
             }
         }
