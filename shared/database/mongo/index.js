@@ -14,7 +14,7 @@ let connection = null;
 
 const connect = () => {
   if (!connection) {
-    if (MONGO_SRV) {
+    if (!!!MONGO_SRV) {
       connection = mongoose.connect(MONGO_HOST, {
         useCreateIndex: true,
         useNewUrlParser: true,
