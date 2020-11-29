@@ -14,14 +14,8 @@ module.exports.create = async (bankBody) => {
 }
 
 module.exports.getBanks = async () => {
-    let banks;
-    try {
-        await connect();
-        banks = await bankSchema.find({})
-    } catch (error) {
-        console.error(error)
-    } finally {
-        await destroy();
-    }
+    await connect();
+    const banks = await bankSchema.find({})
+    await destroy();
     return banks;
 }
