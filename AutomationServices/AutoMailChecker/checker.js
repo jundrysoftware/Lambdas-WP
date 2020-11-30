@@ -3,8 +3,9 @@ const imaps = require('imap-simple')
 const utils = require('./utils')
 const config = require('./configs')
 const moment = require('moment')
-const { create: createNewPrePay } = require('../../shared/database/repos/prePayment')
-const { getBanks } = require('../../shared/database/repos/bank');
+const { createMultiple: createMultiplesPayments } = require('../../shared/database/repos/payment.repo')
+const { getBanks } = require('../../shared/database/repos/bank.repo');
+const { getUser } = require('../../shared/database/repos/user.repo');
 
 String.prototype.splice = function (idx, rem, str) {
     return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
@@ -15,12 +16,16 @@ const {
 } = process.env
 
 const start = async (event, context) => {
+    console.info('Getting User Config')
+    // This function open the mongo connection
+    const user = await getUser({ emails: config.imap.user })
+
     console.info('Getting Banks Config')
-    const banks = await getBanks();
+    const banks = await getBanks({ user: user._id });
 
     console.info('Connecting to email')
     const connection = await imaps.connect(config)
-    
+
 
     for (let index = 0; index < banks.length; index++) {
         const bank = banks[index];
@@ -77,22 +82,24 @@ const start = async (event, context) => {
                         text: res.description,
                         type: filter.type,
                         createdBy: 'AUTO_EMAIL_SERVICE',
-                        createdAt: moment(message.date).format()
+                        createdAt: moment(message.date).format(),
+                        user: user._id
                     }
 
-                    if(GranularData.indexOf(prePaymentObj) === -1){ // Do not enter duplicated values.
+                    if (GranularData.indexOf(prePaymentObj) === -1) { // Do not enter duplicated values.
                         GranularData.push(prePaymentObj)
                     }
                 }
-                console.log('==== FINISHED FILTER ' + filter.phrase );
+                console.log('==== FINISHED FILTER ' + filter.phrase);
             }
         }
-        await createNewPrePay(GranularData)
+        await createMultiplesPayments(GranularData)
         console.log('==== FINISHED ' + bank.name + ' with a total of ' + GranularData.length + ' Messages saved');
     }
 
     return context.done(null);
 }
+
 module.exports = {
     start
 }

@@ -1,28 +1,32 @@
 const mongodb = require('../../../../shared/database/mongo')
-const boxflowModel = require('../../../../shared/models/boxflow')
+const PaymentModel = require('../../../../shared/models/payment.model')
+const userRepo = require('../../../../shared/database/repos/user.repo')
 const moment = require('moment')
 
 module.exports = {
     updateCategory: async (request) => {
-        try {
-            await mongodb.connect()
-        } catch (error) {
-            console.error('error trying to connect with mongo' + error)
-            return "Error trying to connect with database"
-        }
 
         let { From, To, Body } = request
         if (!From || !To, !Body) return "Internal Error :trollface:"
 
+        // This function open the mongo connection
+        const user = await userRepo.getUser({ phones: From.replace('whatsapp:', '') })
+
+        if (Object.entries(user).length == 0) {
+            return "Error this phone number is not accepted."
+        }
+
+
         let [task, auxTask, categoryFrom, categoryTo] = Body.split("+")
-        
+
         console.log(task, auxTask, categoryFrom, categoryTo);
 
         if (!categoryFrom || !categoryTo)
             return "CategoryFrom or categoryTo wasn't sent"
 
+
         let query = {
-            phoneNumber: From,
+            user: user._id,
             category: categoryFrom,
         }
 
@@ -31,7 +35,7 @@ module.exports = {
         }
 
         try {
-            let result = await boxflowModel.update(query, update)
+            let result = await PaymentModel.update(query, update)
         } catch (error) {
             console.log(error)
             return "Something saving in database"
@@ -39,15 +43,15 @@ module.exports = {
         return "Ok, i've update all purchases"
     },
     addRecord: async (request) => {
-        try {
-            await mongodb.connect()
-        } catch (error) {
-            console.error('error trying to connect with mongo' + error)
-            return "Error trying to connect with database"
-        }
 
         let { From, To, Body } = request
         if (!From || !To, !Body) return "Ey! Some params are missing"
+
+        const user = await userRepo.getUser({ phones: From.replace('whatsapp:', '') })
+
+        if (Object.entries(user).length == 0) {
+            return "Error this phone number is not accepted."
+        }
 
         let [task, category, amount, ...description] = Body.split("+")
         description = description.join(" ")
@@ -58,16 +62,22 @@ module.exports = {
 
         category = category ? category.split("/") : []
 
+
         let object = {
-            phoneNumber: From,
+            user: user._id,
             secondCategory: category[1],
             category: category[0],
             amount,
-            description
+            description,
+            text: description,
+            type: 'EXPENSE',
+            isAccepted: true,
+            isHidden: true,
+            createdBy: 'WHATSAPP_BOT'
         }
 
         try {
-            await boxflowModel.create(object)
+            await PaymentModel.create(object)
             await mongodb.destroy()
         } catch (error) {
             console.log(error)
@@ -76,15 +86,16 @@ module.exports = {
         return "Ok, i've saved this purchase"
     },
     listCategory: async (request) => {
-        try {
-            await mongodb.connect()
-        } catch (error) {
-            console.error('error trying to connect with mongo' + error)
-            return "Error trying to connect with database"
-        }
 
         let { From, To, Body } = request
         if (!From || !To, !Body) return "Ey! Some params are missing"
+
+        // This function open the mongo connection
+        const user = await userRepo.getUser({ phones: From.replace('whatsapp:', '') })
+
+        if (Object.entries(user).length == 0) {
+            return "Error this phone number is not accepted."
+        }
 
         let [task, category, timeNumber, long] = Body.split("+")
 
@@ -107,19 +118,22 @@ module.exports = {
 
         let date = moment().subtract(timeNumber.toLowerCase(), long.toLowerCase())
 
+
         let query = {
-            phoneNumber: From,
+            user: user._id,
             createdAt: {
                 $gte: new Date(date)
             }
         }
-        
-        if(category.length)
+
+        if (category.length)
             query.category = { $in: category }
-        
+        else
+            query.category = { $nin: [null, undefined] }
+
 
         try {
-            let result = await boxflowModel.find(query, { description: 1, amount: 1, category: 1 })
+            let result = await PaymentModel.find(query, { description: 1, amount: 1, category: 1 })
 
             if (!result || !result.length)
                 return "⚠ No encontré datos 🙅‍♀️"
@@ -143,15 +157,16 @@ module.exports = {
         }
     },
     sumCategories: async (request) => {
-        try {
-            await mongodb.connect()
-        } catch (error) {
-            console.error('error trying to connect with mongo' + error)
-            return "Error trying to connect with database"
-        }
 
         let { From, To, Body } = request
         if (!From || !To, !Body) return "Ey! Some params are missing"
+
+        // This function open the mongo connection
+        const user = await userRepo.getUser({ phones: From.replace('whatsapp:', '') })
+
+        if (Object.entries(user).length == 0) {
+            return "Error this phone number is not accepted."
+        }
 
         let [task, subtask, category, timeNumber, long] = Body.split("+")
         console.log(task, subtask, category, timeNumber, long);
@@ -171,7 +186,7 @@ module.exports = {
         let date = moment().subtract(timeNumber.toLowerCase(), long.toLowerCase())
 
         let query = {
-            phoneNumber: From,
+            user: user._id,
             category: { $in: category },
             createdAt: {
                 $gte: new Date(date)
@@ -180,7 +195,7 @@ module.exports = {
 
         try {
             // return JSON.stringify(query)
-            let result = await boxflowModel.find(query, { description: 1, amount: 1, category: 1 })
+            let result = await PaymentModel.find(query, { description: 1, amount: 1, category: 1 })
             if (!result || !result.length)
                 return "⚠ No encontré datos 🙅‍♀️"
 
@@ -197,15 +212,15 @@ module.exports = {
         }
     },
     substractCategories: async (request) => {
-        try {
-            await mongodb.connect()
-        } catch (error) {
-            console.error('error trying to connect with mongo' + error)
-            return "Error trying to connect with database"
-        }
-
         let { From, To, Body } = request
         if (!From || !To, !Body) return "Ey! Some params are missing"
+
+        // This function open the mongo connection
+        const user = await userRepo.getUser({ phones: From.replace('whatsapp:', '') })
+
+        if (Object.entries(user).length == 0) {
+            return "Error this phone number is not accepted."
+        }
 
         let [task, subtask, toCategory, fromCategory, timeNumber, long] = Body.split("+")
         console.log(task, subtask, fromCategory, toCategory, timeNumber, long);
@@ -222,8 +237,9 @@ module.exports = {
 
         let date = moment().subtract(timeNumber.toLowerCase(), long.toLowerCase())
 
+
         let query = {
-            phoneNumber: From,
+            user: user._id,
             category: { $in: fromCategory },
             createdAt: {
                 $gte: new Date(date)
@@ -231,7 +247,7 @@ module.exports = {
         }
 
         try {
-            let result = await boxflowModel.find(query, { description: 1, amount: 1, category: 1 })
+            let result = await PaymentModel.find(query, { description: 1, amount: 1, category: 1 })
             if (!result || !result.length)
                 return "⚠ No encontré datos 🙅‍♀️"
 
