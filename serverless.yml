@@ -9,11 +9,11 @@ provider:
   timeout: 15 # optional, in seconds, default is 6
 functions:
   TwilioIncommingMessage:
-    handler: Personal-Interfaces/Functions/handlerIncommingMessage.handler
+    handler: AutomationServices/WhatsAppBot/handlerIncommingMessage.handler
     name: TwilioIncommingMessage-lambda-${opt:stage}
-    environment: 
+    environment:
       NODE_ENV: ${opt:stage}
-      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
+      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
@@ -22,22 +22,22 @@ functions:
       MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       MONGO_SSL: true
-    events: 
-      - http: 
-          path: '/whatsapp/webhook/'
-          method: 'post'
-          cors: 
+    events:
+      - http:
+          path: "/whatsapp/webhook/"
+          method: "post"
+          cors:
             - enabled: true
-            - origin: '*'
-            - headers:  
-              - Content-Type
-              - Transfer-encoding
+            - origin: "*"
+            - headers:
+                - Content-Type
+                - Transfer-encoding
   GetPrepayments:
-    handler: Personal-Interfaces/Functions/Payments.get
+    handler: API/Functions/Payments.get
     name: PrepaymentsRepo-get-${opt:stage}
-    environment: 
+    environment:
       NODE_ENV: ${opt:stage}
-      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
+      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
@@ -47,20 +47,20 @@ functions:
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
       MONGO_SSL: true
-    events: 
-      - http: 
+    events:
+      - http:
           path: /prepayments
           method: GET
-          cors: 
+          cors:
             - enabled: true
-            - origin: '*'
-            - headers:  'Access-Control-Allow-Origin'
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
   PutPrepayments:
-    handler: Personal-Interfaces/Functions/Payments.put
+    handler: API/Functions/Payments.put
     name: PrepaymentsRepo-put-${opt:stage}
-    environment: 
+    environment:
       NODE_ENV: ${opt:stage}
-      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
+      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
@@ -70,20 +70,20 @@ functions:
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
       MONGO_SSL: true
-    events: 
-      - http: 
+    events:
+      - http:
           path: /prepayments
           method: PUT
-          cors: 
+          cors:
             - enabled: true
-            - origin: '*'
-            - headers:  'Access-Control-Allow-Origin'
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
   GetStats:
-    handler: Personal-Interfaces/Functions/BoxFlow.get
+    handler: API/Functions/BoxFlow.get
     name: StatsRepo-get-${opt:stage}
-    environment: 
+    environment:
       NODE_ENV: ${opt:stage}
-      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
+      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_PORT: 27017
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
@@ -93,27 +93,27 @@ functions:
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
       MONGO_SSL: true
-    events: 
-      - http: 
+    events:
+      - http:
           path: /boxflow/stats
           method: GET
-          cors: 
+          cors:
             - enabled: true
-            - origin: '*'
-            - headers:  'Access-Control-Allow-Origin'
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
   EmailChecker:
     handler: AutomationServices/AutoMailChecker/checker.start
     name: AutomationServices-EmailChecker-${opt:stage}
-    events: 
-      - schedule: 
-          name: 'cw-start-email-checker'
-          description: 'Function to connecto to Gmail :D'
+    events:
+      - schedule:
+          name: "cw-start-email-checker"
+          description: "Function to connecto to Gmail :D"
           rate: rate(20 minutes)
           enabled: true
-    environment: 
-      MONGO_SRV:  ${file(./config/${opt:stage}.json):SRV_CONFIG}
+    environment:
+      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
       MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
-      MONGO_PORT: '27017'
+      MONGO_PORT: "27017"
       MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
       MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
       MONGO_SSL: true
@@ -121,4 +121,3 @@ functions:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
       NODE_ENV: ${opt:stage}
-    

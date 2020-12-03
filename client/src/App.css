@@ -1,0 +1,68 @@
+.full-container{
+  width: 90%;
+  margin: 30px auto;
+}
+
+.prepayment-item-expansion-content form{
+  margin-top: 20px;
+}
+.prepayment-item-expansion-content form input,
+.prepayment-item-expansion-content form select,
+.send-prepayment-button{
+  font-size: 14px;
+}
+.send-prepayment-button{
+  float: right;
+}
+.home-container{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  width: 100%;
+  justify-content: center;
+}
+.table-container-emerald{
+  margin: 10px;
+}
+.table-container-emerald{
+  max-width: 600px;
+}
+.full-screen-secret-container{
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    rgb(29, 29, 29) 0%,
+    rgb(29, 29, 29) 100%
+  );
+}
+
+.login-container{
+  height: 150px;
+  width: 500px;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0px 0px 10px rgb(42, 42, 42);
+}
+.secret-key-input-container{
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.sign-in-button{
+  margin-top: 20px;
+  margin-left: 20px;
+}
+#passwordmeter{
+  margin-top: 60px;
+  margin-left: -250px;
+}
+#passwordmeter::before{
+  left: 10px;
+  top: -5px;
+  transform: rotate(135deg)
+}
