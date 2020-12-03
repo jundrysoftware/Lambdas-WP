@@ -10,7 +10,8 @@ const BankSchema = mongoose.Schema(
         filters: [
             {
                 phrase: { type: String },
-                type: { type: String }
+                type: { type: String },
+                parser: { type: String }
             },
         ],
         folder: {

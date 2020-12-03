@@ -29,7 +29,6 @@ const start = async (event, context) => {
 
     for (let index = 0; index < banks.length; index++) {
         const bank = banks[index];
-
         console.info(`Openning ${bank.folder}`)
         await connection.openBox(bank.folder)
 
@@ -63,22 +62,17 @@ const start = async (event, context) => {
                 for (let index = 0; index < messages.length; index++) {
                     const message = messages[index];
 
-                    const res = utils.search(message.html, filter.phrase, bank.ignore_phrase, bank.name)
+                    const res = utils.search(message.html, filter.phrase, filter.parser, bank.ignore_phrase, bank.name)
                     if (!res) continue;
-                    let thenum = res.textWithValue.match(/(\b\d+(?:[\.,]\d+)*)/g, "")
-                    thenum = thenum[bank.index_value]
-
-                    // Check for decimal numbers
-                    if (thenum.includes(',') && thenum.substring(thenum.indexOf(',') + 1).length === 2) {
-                        const start = thenum.indexOf(',')
-                        thenum = thenum.replace(/\D/g, "").splice(start - 1, start, '.' + thenum.substring(thenum.indexOf(',') + 1))
-                    } else {
-                        thenum = thenum.replace(/\D/g, "")
-                    }
 
                     const prePaymentObj = {
                         bank: bank.name,
-                        amount: parseFloat(thenum),
+                        source: res.TRANSACTION_SOURCE,
+                        destination: res.TRANSACTION_DESTINATION,
+                        amount: res.TRANSACTION_VALUE,
+                        cardType: res.TRANSACTION_CARD_TYPE,
+                        account: res.TRANSACTION_ACCOUNT,
+                        category: res.TRANSACTION_TYPE,
                         text: res.description,
                         type: filter.type,
                         createdBy: 'AUTO_EMAIL_SERVICE',
