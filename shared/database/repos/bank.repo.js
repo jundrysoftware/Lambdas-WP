@@ -1,4 +1,4 @@
-const bankSchema = require('../../models/bank');
+const bankSchema = require('../../models/bank.model');
 const { connect, destroy, isConnected } = require("../mongo");
 
 
@@ -13,9 +13,9 @@ module.exports.create = async (bankBody) => {
     }
 }
 
-module.exports.getBanks = async () => {
+module.exports.getBanks = async (searchCriteria = {}) => {
     await connect();
-    const banks = await bankSchema.find({})
+    const banks = await bankSchema.find(searchCriteria)
     await destroy();
     return banks;
 }

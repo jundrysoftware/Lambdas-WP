@@ -1,12 +1,15 @@
-const prepaymentsRepo = require("../../../shared/database/repos/prePayment");
-const boxFlowRepo = require("../../../shared/database/repos/boxFlow");
+const PaymentRepo = require("../../../shared/database/repos/payment.repo");
+const { getUser } = require("../../../shared/database/repos/user.repo");
 const { connect: connectToMongo, destroy: detroyMongoConnection, connectToMongoed } = require("../../../shared/database/mongo");
+const {
+  PHONE_NUMBER
+} = process.env
 
 module.exports.get = async (event, context, callback) => {
   const { body } = event;
   let results = {};
   try {
-    results = await prepaymentsRepo.getActive();
+    results = await PaymentRepo.getActive({ phones: PHONE_NUMBER });
   } catch (error) {
     return {
       statusCode: "500",
@@ -25,45 +28,39 @@ module.exports.get = async (event, context, callback) => {
   });
 };
 
-module.exports.put = async (event, context, callback) =>{
+module.exports.put = async (event, context, callback) => {
   const { body: bodyString } = event
   const {
     id,
     amount,
-    createdAt, 
+    createdAt,
     description,
     category,
     hide = false,
-    type,
     accepted
   } = JSON.parse(bodyString)
+
   console.log(JSON.parse(bodyString))
+
   try {
-    if(!id || !amount || !createdAt || !description || !category || !type) return { statusCode: 400, body: JSON.stringify({message: 'Bad request'})}
-    await connectToMongo()
-    const data = await prepaymentsRepo.updatePrepayment({
-      id, 
+    if (!id || !amount || !createdAt || !description || !category) return { statusCode: 400, body: JSON.stringify({ message: 'Bad request' }) }
+    const user = await getUser({ phones: PHONE_NUMBER })
+    const data = await PaymentRepo.updatePayment({
+      id,
+      user: user._id,
       isHidden: hide,
-      isAccepted: accepted
+      isAccepted: accepted,
+      description: description,
+      category: category
     })
-    let resultBox = null
-    if(accepted){
-      resultBox = await boxFlowRepo.saveBoxFlow({
-        type,
-        amount, 
-        createdAt, 
-        description, 
-        category, 
-      })
-    }
-    const statusCode = (data.nModified > 0 && resultBox) ? 204 : 400
+    const statusCode = (data.nModified > 0) ? 204 : 400
     await detroyMongoConnection()
     return {
-      statusCode, 
+      statusCode,
       headers: {
         'Access-Control-Allow-Origin': '*'
       },
-      body: JSON.stringify({success: statusCode === 204 })
+      body: JSON.stringify({ success: statusCode === 204 })
     }
   } catch (error) {
     console.error(error)
