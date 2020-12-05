@@ -10,7 +10,8 @@ const BankSchema = mongoose.Schema(
         filters: [
             {
                 phrase: { type: String },
-                type: { type: String }
+                type: { type: String },
+                parser: { type: String }
             },
         ],
         folder: {
@@ -20,7 +21,8 @@ const BankSchema = mongoose.Schema(
             type: String
         },
         ignore_phrase: { type: String, default: null },
-        index_value: { type: Number }
+        index_value: { type: Number },
+        user: { type: mongoose.Types.ObjectId, required: true }
     },
     {
         timestamps: true,

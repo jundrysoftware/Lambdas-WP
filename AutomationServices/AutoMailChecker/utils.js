@@ -2,6 +2,14 @@ const mailparser = require('mailparser').simpleParser
 const _ = require('lodash')
 const cheerio = require('cheerio');
 const { htmlToText } = require('html-to-text');
+const { paymentsParser: paymentsPSEParser } = require('./parsers/pse/payments.parser')
+const { paymentsParser: paymentsBancolombiaParser } = require('./parsers/bancolombia/payments.parser')
+const { shoppingParser } = require('./parsers/bancolombia/shopping.parser')
+const { productParser } = require('./parsers/bancolombia/productPayments.parser')
+const { transfersParser } = require('./parsers/bancolombia/transfers.parser')
+const { transferReceptionParser } = require('./parsers/bancolombia/transferReception.parser')
+const { debitWithdrawalParser } = require('./parsers/bancolombia/debitWithdrawal.parser')
+const { creditCardWithdrawalParser } = require('./parsers/bancolombia/creditCardWithdrawal.parser')
 
 
 function isBase64(str) {
@@ -34,14 +42,15 @@ module.exports.readRawEmail = async (emails = []) => {
     return parsed
 }
 
-module.exports.search = (html, filter, skipped_phrase = 'Bancolombia le informa que su factura inscrita', bank_name = "BANCOLOMBIA") => {
+module.exports.search = (html, filter, parser, skipped_phrase = 'Bancolombia le informa que su factura inscrita', bank_name = "BANCOLOMBIA") => {
+    if ([null, undefined].includes(parser)) return undefined; //If we don't have a parser, just return null to continue with the next message
     const $ = cheerio.load(html)
     const res = $('p')
-    const value = res.text().trim().toLowerCase()
+    const value = res.text().trim().toLowerCase().replace(/=/g,'')
     filter = filter.toLocaleLowerCase()
     if (value.includes(filter)) {
         if (skipped_phrase === null || skipped_phrase === undefined || !value.includes(skipped_phrase.toLocaleLowerCase())) { // If the phrase do not includes the skipped phrase
-            let description, textWithValue;
+            let description, parserResult;
 
             // The fisrt coincidence for the filter phrase
             const first = value.indexOf(filter)
@@ -49,9 +58,39 @@ module.exports.search = (html, filter, skipped_phrase = 'Bancolombia le informa 
 
             switch (bank_name) {
                 case "BANCOLOMBIA": {
-                    const end = value.indexOf('*', first + 1)
+                    const end = value.indexOf('018000931987', first + 1) + 12
                     description = value.substring(first, end)
-                    textWithValue = description
+
+                    switch (parser) {
+                        case 'payments': {
+                            parserResult = paymentsBancolombiaParser(description)
+                            break;
+                        }
+                        case 'shopping': {
+                            parserResult = shoppingParser(description)
+                            break;
+                        }
+                        case 'product': {
+                            parserResult = productParser(description)
+                            break;
+                        }
+                        case 'transfer': {
+                            parserResult = transfersParser(description)
+                            break;
+                        }
+                        case 'transferReception': {
+                            parserResult = transferReceptionParser(description)
+                            break;
+                        }
+                        case 'debitWithdrawal': {
+                            parserResult = debitWithdrawalParser(description)
+                            break;
+                        }
+                        case 'creditCardWithdrawal': {
+                            parserResult = creditCardWithdrawalParser(description)
+                            break;
+                        }
+                    }
                     break;
                 }
                 case "PSE": {
@@ -61,20 +100,16 @@ module.exports.search = (html, filter, skipped_phrase = 'Bancolombia le informa 
                      * has a CUS (like a uuid) of the transaction, that's why I need to look for the value 'Valor de la Transacción'
                      */
                     const end = value.indexOf('[http://www.jlnsoftware.com.br', first + 1)
-                    description = value.substring(first, end).toLowerCase()
-                    const valuePhraseToSearch = 'Valor de la Transacción:'.toLocaleLowerCase()
-                    if (description.includes(valuePhraseToSearch)) {
-                        textWithValue = description.substring(description.indexOf(valuePhraseToSearch))
-                    }
+                    description = value.substring(first, end)
+
+                    parserResult = paymentsPSEParser(description)
                     break;
                 }
-                default:
-                    break;
             }
 
             return {
                 description,
-                textWithValue
+                ...parserResult
             }
         }
     }
