@@ -45,7 +45,7 @@ const start = async (event, context) => {
         const GranularData = []
 
         const searchValues = [
-            // 'UNSEEN',
+            'UNSEEN',
             ['SINCE', date],
             ['SUBJECT', bank.subject],
         ]
