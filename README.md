@@ -32,6 +32,12 @@
 sls deploy --stage [DEV/TEST/PROD]
 ```
 
+## Mongo Collections
+    * users
+    * payments 
+    * banks 
+
+
 ### Mongo Documents (Examples):
 
 ## User
@@ -73,16 +79,20 @@ sls deploy --stage [DEV/TEST/PROD]
         },
         "filters": [{
             "phrase": "Bancolombia te informa recepción transferencia",
-            "type": "INCOME"
+            "type": "INCOME",
+            "parser": "transferReception"
         }, {
             "phrase": "Bancolombia le informa Compra",
-            "type": "EXPENSE"
+            "type": "EXPENSE",
+            "parser": "shopping"
         }, {
             "phrase": "Bancolombia le informa Retiro",
-            "type": "EXPENSE"
+            "type": "EXPENSE",
+            "parser": "debitWithdrawal"
         }, {
             "phrase": "Bancolombia le informa Transferencia",
             "type": "EXPENSE"
+            "parser": "transfer"
         }],
         "name": "BANCOLOMBIA",
         "subject": "Servicio de Alertas y Notificaciones Bancolombia",
@@ -124,3 +134,10 @@ sls deploy --stage [DEV/TEST/PROD]
     }
 ]
 ```
+
+## Filters Types: 
+  - Payments: "Bancolombia le informa Pago"
+  - Shopping: "Bancolombia le informa Compra"
+  - Transfer: "Bancolombia le informa Transferencia"
+  - TransferReception: "Bancolombia le informa tecepción de Transferencia"
+  - DebitWithdrawal: "Bancolombia le informa Retiro"

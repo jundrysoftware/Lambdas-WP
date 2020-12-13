@@ -1,6 +1,6 @@
 const PaymentRepo = require("../../../shared/database/repos/payment.repo");
 const { getUser } = require("../../../shared/database/repos/user.repo");
-const { connect: connectToMongo, destroy: detroyMongoConnection, connectToMongoed } = require("../../../shared/database/mongo");
+const { destroy: detroyMongoConnection } = require("../../../shared/database/mongo");
 const {
   PHONE_NUMBER
 } = process.env
@@ -32,18 +32,14 @@ module.exports.put = async (event, context, callback) => {
   const { body: bodyString } = event
   const {
     id,
-    amount,
-    createdAt,
     description,
     category,
     hide = false,
-    accepted
+    accepted = true
   } = JSON.parse(bodyString)
 
-  console.log(JSON.parse(bodyString))
-
   try {
-    if (!id || !amount || !createdAt || !description || !category) return { statusCode: 400, body: JSON.stringify({ message: 'Bad request' }) }
+    if (!id || !description || !category) return { statusCode: 400, body: JSON.stringify({ message: 'Bad request' }) }
     const user = await getUser({ phones: PHONE_NUMBER })
     const data = await PaymentRepo.updatePayment({
       id,

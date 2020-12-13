@@ -19,19 +19,22 @@ const start = async (event, context) => {
     console.info('Getting User Config')
     // This function open the mongo connection
     const user = await getUser({ emails: config.imap.user })
+    if(!user)
+        throw new Error('Users are not configured yet, please create the user document')
 
     console.info('Getting Banks Config')
     const banks = await getBanks({ user: user._id });
 
+    if(!banks)
+        throw new Error('Banks are not configured yet, please create the bank documents')
+
     console.info('Connecting to email')
     const connection = await imaps.connect(config)
-
 
     for (let index = 0; index < banks.length; index++) {
         const bank = banks[index];
         console.info(`Openning ${bank.folder}`)
         await connection.openBox(bank.folder)
-
         const date = moment()
             .subtract(MINUTES_AGO_SEARCH, 'minutes')
             .toISOString()
