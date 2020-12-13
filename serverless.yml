@@ -119,5 +119,6 @@ functions:
       MONGO_SSL: true
       MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
+      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
       EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
       NODE_ENV: ${opt:stage}

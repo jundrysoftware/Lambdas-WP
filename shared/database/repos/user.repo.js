@@ -1,3 +1,4 @@
+const { search } = require("../../../AutomationServices/AutoMailChecker/utils");
 const Users = require("../../models/user.model");
 const { connect, destroy, isConnected } = require("../mongo");
 
@@ -14,8 +15,7 @@ module.exports.create = async (UserBody = []) => {
 module.exports.getUser = async (searchCriteria) => {
     try {
         await connect();
-        const result = await Users.find(searchCriteria); 
-        return result[0] ? result[0] : {};
+        return await Users.findOne(searchCriteria); 
     } catch (e) {
         console.error(e);
         return {};
