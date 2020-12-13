@@ -1,6 +1,6 @@
 const PaymentRepo = require("../../../shared/database/repos/payment.repo");
 const { getUser } = require("../../../shared/database/repos/user.repo");
-const { connect: connectToMongo, destroy: detroyMongoConnection, connectToMongoed } = require("../../../shared/database/mongo");
+const { destroy: detroyMongoConnection } = require("../../../shared/database/mongo");
 const {
   PHONE_NUMBER
 } = process.env
