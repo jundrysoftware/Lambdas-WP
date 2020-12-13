@@ -88,6 +88,7 @@ const PrePaymentItemComponent = (props = { item: {} }) => {
                   <option value="technology">Tech</option>
                   <option value="apartment">Apartment</option>
                   <option value="whim">Whim</option>
+                  <option value="liqueur">Licor</option>
                   <option value="work">Work</option>
                   <option value="childs">Childs</option>
                   <option value="wife">Wife</option>

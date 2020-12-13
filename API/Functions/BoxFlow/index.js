@@ -1,11 +1,11 @@
 const { connect: connectToMongo, destroy: detroyMongoConnection, connectToMongoed } = require("../../../shared/database/mongo");
 const PaymentRepo = require("../../../shared/database/repos/payment.repo");
 const { getUser } = require("../../../shared/database/repos/user.repo");
+const _ = require('lodash')
+const moment = require('moment')
 const {
   PHONE_NUMBER
 } = process.env
-
-const _ = require('lodash')
 
 const processMonthlyMetrics = async (userId) => {
 
@@ -48,11 +48,44 @@ const processCategoryMetrics = async (userId) => {
   return results
 }
 
+const processHomeMetrics = async (userId, date) =>{
+  const result = await PaymentRepo.getAllByDate({userId, date})
+  let latestPayments = [], expensivePayments = [], totalByCategory = [], acceptedPayments = [], prepayments = []
+
+  //Split types
+  result.forEach(item=>{
+    if(item.isAccepted)
+      acceptedPayments.push(item)
+    else 
+      prepayments.push(item)
+  })
+  
+  //prepayments 
+  prepayments = prepayments.slice(0,10)
+
+  //Latest payments 
+  latestPayments = acceptedPayments.slice(0,10)
+
+  //expensivePayments 
+  expensivePayments = _.orderBy(acceptedPayments, 'amount', ['desc']).slice(0,10)
+
+  // Group by category
+  totalByCategory = _.groupBy(acceptedPayments, 'category')
+  return {
+    latestPayments, 
+    expensivePayments, 
+    totalByCategory, 
+    prepayments
+  }
+}
+
+//stats endpoint 
 module.exports.get = async (event, context, callback) => {
   let results = [];
   const { multiValueQueryStringParameters: queryParams } = event;
 
   const metricType = queryParams && queryParams.metricType ? queryParams.metricType[0] : 'month';
+  const date = queryParams && queryParams.date ? queryParams.date[0] : moment().subtract(1, 'month').toString()
   try {
     // This function open the mongo connection
     const user = await getUser({ phones: PHONE_NUMBER })
@@ -62,6 +95,9 @@ module.exports.get = async (event, context, callback) => {
         break;
       case 'category':
         results = await processCategoryMetrics(user._id)
+        break;
+      case 'home':
+        results = await processHomeMetrics(user._id, date)
         break;
 
       default:
