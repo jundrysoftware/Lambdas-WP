@@ -134,3 +134,10 @@ sls deploy --stage [DEV/TEST/PROD]
     }
 ]
 ```
+
+## Filters Types: 
+  - Payments: "Bancolombia le informa Pago"
+  - Shopping: "Bancolombia le informa Compra"
+  - Transfer: "Bancolombia le informa Transferencia"
+  - TransferReception: "Bancolombia le informa tecepción de Transferencia"
+  - DebitWithdrawal: "Bancolombia le informa Retiro"
