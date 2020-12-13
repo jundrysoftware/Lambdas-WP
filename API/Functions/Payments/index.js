@@ -32,18 +32,14 @@ module.exports.put = async (event, context, callback) => {
   const { body: bodyString } = event
   const {
     id,
-    amount,
-    createdAt,
     description,
     category,
     hide = false,
-    accepted
+    accepted = true
   } = JSON.parse(bodyString)
 
-  console.log(JSON.parse(bodyString))
-
   try {
-    if (!id || !amount || !createdAt || !description || !category) return { statusCode: 400, body: JSON.stringify({ message: 'Bad request' }) }
+    if (!id || !description || !category) return { statusCode: 400, body: JSON.stringify({ message: 'Bad request' }) }
     const user = await getUser({ phones: PHONE_NUMBER })
     const data = await PaymentRepo.updatePayment({
       id,
