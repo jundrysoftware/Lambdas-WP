@@ -5,8 +5,8 @@ const navbar = ({ updateNav }) => {
   return (
     <Navbar breakAt="md" theme="dark">
       <Navbar.Brand>
-        <a href="#foo">
-          <img src="" alt="Finances Site" />
+        <a>
+          <img src="" onClick={(evt)=>updateNav(evt,'home')} alt="Finances Site" />
         </a>
       </Navbar.Brand>
       <Nav>

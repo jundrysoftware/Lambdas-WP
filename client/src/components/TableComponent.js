@@ -2,6 +2,7 @@ import React from "react";
 import { Table } from "emerald-ui/lib";
 
 export default (props) => {
+  const transformNumber = (number)=> new Intl.NumberFormat().format(number)
   const { content = [], title = 'Table title' } = props;
   return (
     <div className="table-container-emerald">
@@ -15,11 +16,11 @@ export default (props) => {
           </tr>
         </thead>
         <tbody>
-          {content.map(({ description, amount, category }) => (
+          {content.map(({ description, amount, category, createdAt }) => (
             <tr>
               <td>{description}</td>
-              <td>{amount}</td>
               <td>{category}</td>
+              <td>${transformNumber(amount)}</td>
             </tr>
           ))}
         </tbody>

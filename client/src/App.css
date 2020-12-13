@@ -15,10 +15,60 @@
   float: right;
 }
 .home-container{
+  display: flex;
+  flex-direction: column;
+}
+.eui-table>tbody>tr>td, .eui-table>thead>tr>th{
+  padding: 10px ;
+}
+.home-container .stats-container{
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   width: 100%;
   justify-content: center;
+}
+.home-container .container-timming-buton button{
+  border: 1px solid grey;
+  padding: 5px 10px;
+}
+.home-container .container-timming-buton button.selected{
+  background-color: rgb(204, 204, 204);
+}
+.home-container .container-timming-buton button:hover{
+  background-color: rgb(204, 204, 204);
+}
+.home-container .categories-container{
+  display: flex;
+  height: 20%;
+  justify-content: center;
+  flex-flow: row wrap;
+  flex-direction: row;
+  margin: 10px auto;
+}
+.categories-container .category-item{
+  margin: 10px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background-color:  rgb(136, 167, 255);
+  width: 160px;
+}
+.categories-container .category-item p{
+  margin: 0px;
+  font-weight: 200;
+  color: white;
+}
+.categories-container .category-item p span{
+  margin: 0px;
+  font-weight: 600;
+}
+.home-container .container-timming-buton button:first-child{  
+  border-radius: 5px 0px 0px 5px;
+}
+.home-container .container-timming-buton button:last-child{  
+  border-radius: 0px 5px 5px 0px;
 }
 .table-container-emerald{
   margin: 10px;
