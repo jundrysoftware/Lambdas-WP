@@ -18,7 +18,7 @@ module.exports.getActive = async (criteria) => {
   try {
     // This function open the mongo connection
     const user = await getUser(criteria)
-
+    if(!user) return []
     const result = await Payments.find({
       user: user._id,
       isAccepted: { $in: [false, null] },
@@ -28,7 +28,7 @@ module.exports.getActive = async (criteria) => {
     return result.reverse();
   } catch (e) {
     console.error(e);
-    return {};
+    return [];
   }
 };
 module.exports.updatePayment = async (Payment) => {

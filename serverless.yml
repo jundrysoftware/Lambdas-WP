@@ -1,6 +1,9 @@
 service: personal-interface
 plugins:
   - serverless-offline
+package: 
+  exclude: 
+    - client/**
 provider:
   name: aws
   runtime: nodejs12.x
