@@ -6,15 +6,18 @@ package:
   exclude: 
     - client/**
     - node_modules/puppeteer/.local-chromium/**
-    - node_modules/chrome-aws-lambda/**
+    - node_modules/chrome-aws-lambda/** # The function is provided by the layer
     - devutils/**
 
 provider:
   name: aws
   runtime: nodejs12.x
   stage: test
-  memorySize: 512 # optional, in MB, default is 1024
-  timeout: 15 # optional, in seconds, default is 6
+  memorySize: 2048  # optional, in MB, default is 1024
+  timeout: 30 # optional, in seconds, default is 6
+  layers:
+    - arn:aws:lambda:${self:provider.region}:764866452798:layer:chrome-aws-lambda:22
+    
 functions:
   TwilioIncommingMessage:
     handler: AutomationServices/WhatsAppBot/handlerIncommingMessage.handler
