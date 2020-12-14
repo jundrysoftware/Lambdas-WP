@@ -142,7 +142,7 @@ functions:
       - schedule:
           name: "cw-start-datacredito-scraper"
           description: "Function to scraper datacredito data"
-          rate: rate(1 minute) # Every Fifteen days, some entities take a time to report updates
+          rate: rate(0 0 15,30 * *) # Every Fifteen days, some entities take a time to report updates
           enabled: true
     environment:
       MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
