@@ -110,9 +110,10 @@ functions:
       - schedule:
           name: "cw-start-datacredito-scraper"
           description: "Function to scraper datacredito data"
-          rate: rate(0 0 15,30 * *) # Every Fifteen days, some entities take a time to report updates
+          rate: rate(10 minutes) # Every Fifteen days, some entities take a time to report updates
           enabled: true
     layers:
       - arn:aws:lambda:${self:provider.region}:764866452798:layer:chrome-aws-lambda:22
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
+      SECRET_KEY: ${file(./config/${opt:stage}.json):SECRET_KEY}
