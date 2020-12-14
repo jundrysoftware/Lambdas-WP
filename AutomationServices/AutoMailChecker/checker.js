@@ -19,13 +19,13 @@ const start = async (event, context) => {
     console.info('Getting User Config')
     // This function open the mongo connection
     const user = await getUser({ emails: config.imap.user })
-    if(!user)
+    if (!user)
         throw new Error('Users are not configured yet, please create the user document')
 
     console.info('Getting Banks Config')
     const banks = await getBanks({ user: user._id });
 
-    if(!banks)
+    if (!banks)
         throw new Error('Banks are not configured yet, please create the bank documents')
 
     console.info('Connecting to email')
@@ -80,7 +80,9 @@ const start = async (event, context) => {
                         type: filter.type,
                         createdBy: 'AUTO_EMAIL_SERVICE',
                         createdAt: moment(message.date).format(),
-                        user: user._id
+                        user: user._id,
+                        description: res.DESCRIPTION,
+                        isAccepted: res.TRANSACTION_TYPE === 'withdrawal' ? true : false
                     }
 
                     if (GranularData.indexOf(prePaymentObj) === -1) { // Do not enter duplicated values.
