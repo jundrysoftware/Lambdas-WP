@@ -104,13 +104,13 @@ functions:
   DataCreditoScraper:
     handler: AutomationServices/DataCreditoScraper/scraper.start
     name: AutomationServices-DataCreditoScraper-${opt:stage}
-    memorySize: 2048  # optional, in MB, default is 1024
-    timeout: 30 # optional, in seconds, default is 6
+    memorySize: 2048  # Recomended, in MB, default is 1024
+    timeout: 60 # Recomended, in seconds, default is 6
     events:
       - schedule:
           name: "cw-start-datacredito-scraper"
           description: "Function to scraper datacredito data"
-          rate: rate(10 minutes) # Every Fifteen days, some entities take a time to report updates
+          rate: rate(0 0 15,30 * *) # Every Fifteen days, some entities take a time to report updates
           enabled: true
     layers:
       - arn:aws:lambda:${self:provider.region}:764866452798:layer:chrome-aws-lambda:22
