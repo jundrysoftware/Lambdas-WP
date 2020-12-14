@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { encrypt } = require('../utils/crypto')
 
 const userSchema = mongoose.Schema(
     {
@@ -27,7 +28,41 @@ const userSchema = mongoose.Schema(
                 required: true,
                 trim: true,
             }
-        ]
+        ],
+        settings: {
+            datacredito: {
+                user: {
+                    iv: {
+                        type: String,
+                        trim: true
+                    },
+                    content: {
+                        type: String,
+                        trim: true
+                    }
+                },
+                password: {
+                    iv: {
+                        type: String,
+                        trim: true
+                    },
+                    content: {
+                        type: String,
+                        trim: true
+                    }
+                },
+                secondpass: {
+                    iv: {
+                        type: String,
+                        trim: true
+                    },
+                    content: {
+                        type: String,
+                        trim: true
+                    }
+                }
+            }
+        }
     },
     {
         timestamps: true
@@ -45,6 +80,25 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
     return !!user;
 };
 
+
+userSchema.pre('save', async function (next) {
+    const user = this;
+
+    // Encrypt Data Credito credentials
+    if (user.isModified('setting.datacredito.user')) {
+        user.setting.datacredito.user = await encrypt(user.setting.datacredito.user);
+    }
+
+    if (user.isModified('setting.datacredito.password')) {
+        user.setting.datacredito.password = await encrypt(user.setting.datacredito.password);
+    }
+    
+    if (user.isModified('setting.datacredito.secondpass')) {
+        user.setting.datacredito.secondpass = await encrypt(user.setting.datacredito.secondpass);
+    }
+    
+    next();
+});
 
 /**
  * @typedef User

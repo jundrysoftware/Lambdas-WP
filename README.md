@@ -33,10 +33,11 @@ sls deploy --stage [DEV/TEST/PROD]
 ```
 
 ## Mongo Collections
-    * users
-    * payments 
-    * banks 
 
+    - users
+    - payments 
+    - banks 
+    - datacreditos
 
 ### Mongo Documents (Examples):
 
@@ -46,12 +47,19 @@ sls deploy --stage [DEV/TEST/PROD]
 [
     {
         "_id": {
-            "$oid": "5fc43e5e607f370ee4f66308"
+            "$oid": "XXXXXXXXX"
         },
         "name": "Andres Morelos",
         "emails": ["me@andresmorelos.dev"],
         "phones": ["+57300300300", "+57300300300"],
-        "email": "me@andresmorelos.dev"
+        "email": "me@andresmorelos.dev",
+        "settings": {
+            datacredito: {
+                user: {}, // Encrypted data
+                password: {},// Encrypted data
+                secondpass: {}// Encrypted data
+            }
+        }
     },
      {
         "_id": {
@@ -60,7 +68,14 @@ sls deploy --stage [DEV/TEST/PROD]
         "name": "Flavio Andres",
         "emails": ["me@flavioaandres.com"],
         "phones": ["+57300300300", "+57300300300"],
-        "email": "me@flavioaandres.com"
+        "email": "me@flavioaandres.com",
+        "settings": {
+            datacredito: {
+                user: {}, // Encrypted data
+                password: {},// Encrypted data
+                secondpass: {}// Encrypted data
+            }
+        }
     }
 ]
 
@@ -136,8 +151,52 @@ sls deploy --stage [DEV/TEST/PROD]
 ```
 
 ## Filters Types: 
-  - Payments: "Bancolombia le informa Pago"
-  - Shopping: "Bancolombia le informa Compra"
-  - Transfer: "Bancolombia le informa Transferencia"
-  - TransferReception: "Bancolombia le informa tecepción de Transferencia"
-  - DebitWithdrawal: "Bancolombia le informa Retiro"
+
+  + Payments: "Bancolombia le informa Pago"
+  + Shopping: "Bancolombia le informa Compra"
+  + Transfer: "Bancolombia le informa Transferencia"
+  + TransferReception: "Bancolombia le informa tecepción de Transferencia"
+  + DebitWithdrawal: "Bancolombia le informa Retiro"
+
+
+## Data Credito
+
+```json
+
+{
+    "_id": {
+        "$oid": "XXXXXXXXXXX"
+    },
+    "comportamiento": "volatil",
+    "score": 727,
+    "amountOfProducts": 4,
+    "arrears30daysLastYear": null,
+    "arrears60daysLastYear": null,
+    "arrearsAmount": 0,
+    "date": {
+        "month": "11",
+        "year": "2020"
+    },
+    "user": {
+        "$oid": "XXXXXXXXXXXX"
+    },
+    "createdAt": {
+        "$date": "2020-12-14T05:40:10.075Z"
+    },
+    "updatedAt": {
+        "$date": "2020-12-14T06:06:21.336Z"
+    },
+    "__v": 0
+}
+```
+
+
+# Data Credito Scraper DICLAIMER
+
+``` 
+THIS SCRAPER IS A RESEARCH BASED PROJECT, WE DON'T ENCOURAGE THE MISUSE OF THIS TOOL FOR BAD INTENTIONS.
+
+WE ALSO RECOMMEND USERS TO ACQUIRE A PLAN AT www.midatacredito.com TO MAKE USE OF THIS TOOL.
+
+THE DEVELOPERS ARE NOT RESPONSIBLE FOR ANY MISUSE OF THIS TOOL.
+```
