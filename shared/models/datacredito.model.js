@@ -14,7 +14,7 @@ const DataCreditoSchema = mongoose.Schema(
         arrears30daysLastYear: {
             type: Number
         },
-        arrears60daysLastYear: {
+        arrears60daysLast2Year: {
             type: Number
         },
         arrearsAmount: {

@@ -171,7 +171,7 @@ sls deploy --stage [DEV/TEST/PROD]
     "score": 727,
     "amountOfProducts": 4,
     "arrears30daysLastYear": null,
-    "arrears60daysLastYear": null,
+    "arrears60daysLast2Year": null,
     "arrearsAmount": 0,
     "date": {
         "month": "11",

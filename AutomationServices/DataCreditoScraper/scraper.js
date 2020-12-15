@@ -30,7 +30,7 @@ const start = async (event, context) => {
         score: history.score.score,
         amountOfProducts: history.diagnostic.estadoPortafolio.numeroProductosAbiertosAlDia,
         arrears30daysLastYear: history.diagnostic.habitoPago.productosConMora30DiasUltimos12Meses,
-        arrears60daysLastYear: history.diagnostic.habitoPago.productosConMora60DiasUltimos48Meses,
+        arrears60daysLast2Year: history.diagnostic.habitoPago.productosConMora60DiasUltimos48Meses,
         arrearsAmount: history.diagnostic.habitoPago.saldoEnMora,
         date: {
             month: date.getMonth(),

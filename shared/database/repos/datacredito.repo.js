@@ -24,7 +24,7 @@ module.exports.updateOrCreate = async (dataCreditoUpdateBody) => {
                 score: dataCreditoUpdateBody.score,
                 amountOfProducts: dataCreditoUpdateBody.amountOfProducts,
                 arrears30daysLastYear: dataCreditoUpdateBody.arrears30days,
-                arrears60daysLastYear: dataCreditoUpdateBody.arrears60days,
+                arrears60daysLast2Year: dataCreditoUpdateBody.arrears60days,
                 arrearsAmount: dataCreditoUpdateBody.arrearsAmount,
             }
         );

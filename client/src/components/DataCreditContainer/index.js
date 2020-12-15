@@ -15,7 +15,7 @@ class DataCreditComponent extends React.Component {
             comportamiento: "",
             amountOfProducts: 0,
             arrears30daysLastYear: 0,
-            arrears60daysLastYear: 0,
+            arrears60daysLast2Year: 0,
             arrearsAmount: 0,
             lastUpdate: new Date()
         };
@@ -35,7 +35,7 @@ class DataCreditComponent extends React.Component {
             comportamiento,
             amountOfProducts,
             arrears30daysLastYear,
-            arrears60daysLastYear,
+            arrears60daysLast2Year,
             arrearsAmount,
             updatedAt
 
@@ -46,7 +46,7 @@ class DataCreditComponent extends React.Component {
                 comportamiento,
                 amountOfProducts,
                 arrears30daysLastYear,
-                arrears60daysLastYear,
+                arrears60daysLast2Year,
                 arrearsAmount,
                 lastUpdate: new Date(updatedAt)
             });
@@ -68,7 +68,7 @@ class DataCreditComponent extends React.Component {
             comportamiento,
             amountOfProducts,
             arrears30daysLastYear,
-            arrears60daysLastYear,
+            arrears60daysLast2Year,
             arrearsAmount,
             lastUpdate
         } = this.state;
@@ -77,7 +77,7 @@ class DataCreditComponent extends React.Component {
             { title: 'comportamiento', value: comportamiento },
             { title: 'Numero de productos', value: amountOfProducts },
             { title: 'Productos en mora los ultimos 30 días', value: arrears30daysLastYear ? arrears30daysLastYear : 0 },
-            { title: 'Productos en mora los ultimos 60 días', value: arrears60daysLastYear ? arrears60daysLastYear : 0 },
+            { title: 'Productos en mora los ultimos 60 días', value: arrears60daysLast2Year ? arrears60daysLast2Year : 0 },
             { title: 'Monto en Mora', value: this.transformNumber(arrearsAmount) },
         ]
 
