@@ -88,6 +88,20 @@ functions:
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
 
+  GetDataCredit:
+    handler: API/Functions/DataCredit.get
+    name: StatsRepo-get-${opt:stage}
+    environment:
+      PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
+    events:
+      - http:
+          path: /datacredit
+          method: GET
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
+
   EmailChecker:
     handler: AutomationServices/AutoMailChecker/checker.start
     name: AutomationServices-EmailChecker-${opt:stage}

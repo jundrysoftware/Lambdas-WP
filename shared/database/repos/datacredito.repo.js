@@ -1,4 +1,5 @@
 const dataCreditoSchema = require('../../models/datacredito.model');
+const { getUser } = require("../repos/user.repo");
 const { connect, destroy, isConnected } = require("../mongo");
 
 
@@ -37,8 +38,20 @@ module.exports.updateOrCreate = async (dataCreditoUpdateBody) => {
 }
 
 module.exports.getdataCreditos = async (searchCriteria = {}) => {
-    await connect();
-    const dataCreditos = await dataCreditoSchema.find(searchCriteria)
-    await destroy();
-    return dataCreditos;
+    try {
+        // This function open the mongo connection
+        const user = await getUser(searchCriteria.user);
+        if (!user) return {};
+        const result = await dataCreditoSchema.find({
+            user: user._id,
+            ...searchCriteria.datacredit
+        })
+        await destroy();
+        return result[0];
+    } catch (e) {
+        console.error(e);
+        return {};
+    }
+
+
 }

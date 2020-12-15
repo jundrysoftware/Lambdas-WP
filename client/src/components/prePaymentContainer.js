@@ -1,16 +1,12 @@
 import React from "react";
 import PrepaymentItem from "./prePaymentItemComponent";
 import { ExpansionTableRowGroup, TableHeader } from "emerald-ui/lib/";
-import axios from 'axios'
-import constants from 'constants'
 
 class PrepaymentComponent extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  onSubmitPrepayment = (data) =>{
+
+  onSubmitPrepayment = (data) => {
     const {
-        onSavePrepayment = ()=>null
+      onSavePrepayment = () => null
     } = this.props
     onSavePrepayment(data)
   }
@@ -25,7 +21,7 @@ class PrepaymentComponent extends React.Component {
         </TableHeader>
         {payments.map((item, i) => (
           <PrepaymentItem
-            onSubmitPrepayment = {this.onSubmitPrepayment}
+            onSubmitPrepayment={this.onSubmitPrepayment}
             item={item}
             key={"prepayment-item-" + i + "-" + item.amount}
           />

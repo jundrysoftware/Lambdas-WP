@@ -36,7 +36,7 @@ class GraphContainer extends Component {
         const data = res.data;
         const [amounts, months] = data.reduce(
           (prev, current) => {
-            prev[0].push(current.total);
+            prev[0].push(current.total.toFixed(2));
             prev[1].push(current.month);
             return prev;
           },
@@ -56,6 +56,7 @@ class GraphContainer extends Component {
         );
       })
       .catch((err) => console.error(err));
+
   getMonthlyCategories = () =>
     axios({
       url: constants.basepath + constants.routes.stats + "?metricType=category",
@@ -71,7 +72,7 @@ class GraphContainer extends Component {
               monthsArray.push(i.month);
               return {
                 x: i.month,
-                y: i.total,
+                y: i.total.toFixed(2),
               };
             }),
           };

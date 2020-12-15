@@ -4,7 +4,8 @@ import moment from "moment";
 import axios from "axios";
 import constants from "../constants";
 
-class PrepaymentComponent extends React.Component {
+class HomeComponent extends React.Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -12,8 +13,8 @@ class PrepaymentComponent extends React.Component {
       latestPayments: [],
       expensivePayments: [],
       totalByCategory: [],
-			prepayments: [],
-			categories: []
+      prepayments: [],
+      categories: []
     };
   }
   isRenderd = false;
@@ -25,42 +26,52 @@ class PrepaymentComponent extends React.Component {
       "?metricType=home&date=" +
       timeAgo;
     const result = await axios.get(url).catch((e) => console.error(e));
-    if (!result || !result.data || (Array.isArray(result.data)) && !result.data.length) return;
+    if ((!result || !result.data || (Array.isArray(result.data))) && !result.data.length) return;
     const categories = [];
     const { latestPayments, expensivePayments, prepayments, totalByCategory } = result.data;
     Object.keys(totalByCategory).forEach((key) => {
-			const catName = key 
-			const total = totalByCategory[key].reduce((prev,curr)=>prev+curr.amount,0)
-			categories.push({
-				name: catName, 
-				total
-			})
-		});
-		const totalTotales = categories.reduce((prev,curr)=>prev+curr.total,0)
-		categories.push({
-			name: 'Total',
-			total: totalTotales
-		})
-    this.setState({
-      latestPayments,
-      expensivePayments,
-			prepayments,
-			categories
+      const catName = key
+      const total = totalByCategory[key].reduce((prev, curr) => prev + curr.amount, 0)
+      categories.push({
+        name: catName,
+        total
+      })
     });
+    const totalTotales = categories.reduce((prev, curr) => prev + curr.total, 0)
+    categories.push({
+      name: 'Total',
+      total: totalTotales
+    })
+    if (this._isMounted) {
+      this.setState({
+        latestPayments,
+        expensivePayments,
+        prepayments,
+        categories
+      });
+    }
   };
 
   onChangeDate = (evt, date) => {
     if (evt) evt.preventDefault();
     const timeAgo = moment().subtract(1, date).toString();
     this.getHomeStatistics(timeAgo);
-    this.setState({ timeAgo: date });
+    if (this._isMounted) {
+      this.setState({ timeAgo: date });
+    }
+
   };
 
   componentDidMount() {
+    this._isMounted = true;
     this.onChangeDate(null, "month");
-	}
-	
-	transformNumber = (number)=> new Intl.NumberFormat().format(number)
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  
+  transformNumber = (number) => Intl.NumberFormat('es-co', {style: 'currency', currency: 'COP'}).format(number)
 
   render() {
     const {
@@ -68,40 +79,39 @@ class PrepaymentComponent extends React.Component {
       latestPayments,
       expensivePayments,
       categories,
-      prepayments,
     } = this.state;
     return (
       <div className="home-container">
         <div className="container-timming-buton">
           <button
             onClick={(evt) => this.onChangeDate(evt, "week")}
-            className={timeAgo === "week" && "selected"}
+            className={timeAgo === "week" ? "selected" : ""}
           >
             Last 1 Week
           </button>
           <button
             onClick={(evt) => this.onChangeDate(evt, "month")}
-            className={timeAgo === "month" && "selected"}
+            className={timeAgo === "month" ? "selected" : ""}
           >
             Last 1 Month
           </button>
           <button
             onClick={(evt) => this.onChangeDate(evt, "year")}
-            className={timeAgo === "year" && "selected"}
+            className={timeAgo === "year" ? "selected" : ""}
           >
             Last 1 Year
           </button>
         </div>
         <div className="categories-container">
-					{
-						categories.map(item=>(
-							<div className="category-item">
-								<p>
-									{item.name}: <span>${this.transformNumber(item.total)}</span>
-								</p>
-							</div>
-						))
-					}
+          {
+            categories.forEach((item, index) => (
+              <div className="category-item" key={`item-${index}`}>
+                <p>
+                  {item.name}: <span>${this.transformNumber(item.total)}</span>
+                </p>
+              </div>
+            ))
+          }
         </div>
         <div className="stats-container">
           <Table title="Ultimas compras" content={latestPayments} />
@@ -111,4 +121,4 @@ class PrepaymentComponent extends React.Component {
     );
   }
 }
-export default PrepaymentComponent;
+export default HomeComponent;

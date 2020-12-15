@@ -6,12 +6,13 @@ const navbar = ({ updateNav }) => {
     <Navbar breakAt="md" theme="dark">
       <Navbar.Brand>
         <a>
-          <img src="" onClick={(evt)=>updateNav(evt,'home')} alt="Finances Site" />
+          <img src="" onClick={(evt) => updateNav(evt, 'home')} alt="Finances Site" />
         </a>
       </Navbar.Brand>
       <Nav>
-        <a onClick={(evt)=>updateNav(evt, 'prepayment')} href="#foo">Pagos Pre Procesados</a>
-        <a onClick={(evt)=>updateNav(evt, 'graph')} href="#foo">Graphs</a>
+        <a onClick={(evt) => updateNav(evt, 'datacredit')} href="#">Data Credito</a>
+        <a onClick={(evt) => updateNav(evt, 'prepayment')} href="#">Pagos Pre Procesados</a>
+        <a onClick={(evt) => updateNav(evt, 'graph')} href="#">Graphs</a>
       </Nav>
     </Navbar>
   );
