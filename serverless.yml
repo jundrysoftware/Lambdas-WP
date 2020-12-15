@@ -90,7 +90,7 @@ functions:
 
   GetDataCredit:
     handler: API/Functions/DataCredit.get
-    name: StatsRepo-get-${opt:stage}
+    name: DataCredit-get-${opt:stage}
     environment:
       PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
     events:
