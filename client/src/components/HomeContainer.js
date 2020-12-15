@@ -104,10 +104,10 @@ class HomeComponent extends React.Component {
         </div>
         <div className="categories-container">
           {
-            categories.forEach((item, index) => (
+            categories.map((item, index) => (
               <div className="category-item" key={`item-${index}`}>
                 <p>
-                  {item.name}: <span>${this.transformNumber(item.total)}</span>
+                  {item.name}: <span>{this.transformNumber(item.total)}</span>
                 </p>
               </div>
             ))
