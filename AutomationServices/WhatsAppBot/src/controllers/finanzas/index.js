@@ -1,6 +1,6 @@
-const mongodb = require('../../../../shared/database/mongo')
-const PaymentModel = require('../../../../shared/models/payment.model')
-const userRepo = require('../../../../shared/database/repos/user.repo')
+const mongodb = require('../../../../../shared/database/mongo')
+const PaymentModel = require('../../../../../shared/models/payment.model')
+const userRepo = require('../../../../../shared/database/repos/user.repo')
 const moment = require('moment')
 
 module.exports = {
