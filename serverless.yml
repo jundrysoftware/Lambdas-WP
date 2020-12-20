@@ -1,9 +1,9 @@
 service: personal-interface
 plugins:
   - serverless-offline
-  
-package: 
-  exclude: 
+
+package:
+  exclude:
     - client/**
     - node_modules/puppeteer/.local-chromium/**
     - node_modules/chrome-aws-lambda/** # The function is provided by the layer
@@ -13,7 +13,7 @@ provider:
   name: aws
   runtime: nodejs12.x
   stage: test
-  memorySize: 520  # optional, in MB, default is 1024
+  memorySize: 520 # optional, in MB, default is 1024
   timeout: 15 # optional, in seconds, default is 6
   environment: #Shared Environments
     NODE_ENV: ${opt:stage}
@@ -46,7 +46,7 @@ functions:
   GetPrepayments:
     handler: API/Functions/Payments.get
     name: PrepaymentsRepo-get-${opt:stage}
-    environment: 
+    environment:
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
     events:
@@ -87,6 +87,7 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+
   GetUser:
     handler: API/Functions/Users.getUserInformation
     name: UserRepo-get-${opt:stage}
@@ -100,6 +101,7 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+
   SaveCategory:
     handler: API/Functions/Users.addNewCategory
     name: UserRepo-Categories-POST-${opt:stage}
@@ -113,6 +115,7 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+
   GetDataCredit:
     handler: API/Functions/DataCredit.get
     name: DataCredit-get-${opt:stage}
@@ -132,7 +135,7 @@ functions:
     name: AutomationServices-EmailChecker-${opt:stage}
     events:
       - schedule:
-          # name: "cw-start-email-checker"
+          name: "cw-start-email-checker"
           description: "Function to connecto to Gmail :D"
           rate: rate(20 minutes)
           enabled: true
@@ -143,7 +146,7 @@ functions:
   DataCreditoScraper:
     handler: AutomationServices/DataCreditoScraper/scraper.start
     name: AutomationServices-DataCreditoScraper-${opt:stage}
-    memorySize: 2048  # Recomended, in MB, default is 1024
+    memorySize: 2048 # Recomended, in MB, default is 1024
     timeout: 60 # Recomended, in seconds, default is 6
     events:
       - schedule:
