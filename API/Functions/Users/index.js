@@ -1,5 +1,5 @@
 const UserRepo = require("./../../../shared/database/repos/user.repo");
-
+const { encrypt, decrypt } = require('../../../shared/utils/crypto')
 module.exports.getUserInformation = async () => {
   try {
     const result = await UserRepo.getUser(
@@ -60,3 +60,25 @@ module.exports.addNewCategory = async (event) => {
     };
   }
 };
+
+module.exports.checkSecretKey = async (event)=>{
+  const body = event.body ? JSON.parse(event.body) : {};
+
+  if(!body.secretKey) return {
+    statusCode: 400
+  }
+
+  const user = await UserRepo.getUser({
+    emails: process.env.EMAIL_USERNAME,
+  })
+
+  if(!user.secretKey) return {statusCode: 409}
+
+  const userKey = decrypt(user.secretKey)
+
+  if(userKey !== body.secretKey) return { statusCode: 401 }
+
+  return {
+    statusCode: 200
+  }
+}

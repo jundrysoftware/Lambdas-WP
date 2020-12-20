@@ -100,6 +100,19 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+  CheckUserSecret:
+    handler: API/Functions/Users.checkSecretKey
+    name: UserRepo-post-secretKey-${opt:stage}
+    environment:
+      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
+    events:
+      - http:
+          path: /user/secret
+          method: POST
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
   SaveCategory:
     handler: API/Functions/Users.addNewCategory
     name: UserRepo-Categories-POST-${opt:stage}

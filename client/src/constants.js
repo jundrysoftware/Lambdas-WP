@@ -7,5 +7,6 @@ export default {
         datacredit: '/datacredit',
         user: '/user',
         categories: '/user/categories',
+        secret: '/user/secret',
     }
 }

@@ -14,7 +14,7 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      secret: "null",
+      secret: null,
       user: {},
       banks: [],
       prepayments: [],
@@ -37,12 +37,27 @@ class App extends React.Component {
   };
 
   componentDidMount = () => {
+    if(!this.state.secretKey) return; 
+    this.loadInitialData()
+  };
+  
+  loadInitialData(){
     this.getPrePayments();
     this.getUserInformation()
-  };
+  }
+  componentDidUpdate(prevProps, prevState){
+    const { secret } = prevState
+    if(!secret && this.state.secret){
+      this.loadInitialData()
+    }
+  }
 
   onLoginClick = (secret) => {
-    console.log(secret);
+    axios.post(constants.basepath + constants.routes.secret, {
+      secretKey: secret
+    }).then(result=>{
+      this.setState({secret: true})
+    }).catch(err=>console.error(err))
   };
 
   getUserInformation = () => {
@@ -89,6 +104,7 @@ class App extends React.Component {
       }
     })
   }
+
   render() {
     const { prepayments, secret, user } = this.state;
 
