@@ -22,6 +22,7 @@ const PrePaymentItemComponent = (props = { item: {} }) => {
     obj.type = type
     obj.createdAt = createdAt
     obj.accepted = isAccepted
+    obj.hide = !isAccepted
     props.onSubmitPrepayment(obj)
   }
 
