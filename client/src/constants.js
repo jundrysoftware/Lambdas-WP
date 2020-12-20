@@ -6,5 +6,6 @@ export default {
         stats: '/boxflow/stats',
         datacredit: '/datacredit',
         user: '/user',
+        categories: '/user/categories',
     }
 }

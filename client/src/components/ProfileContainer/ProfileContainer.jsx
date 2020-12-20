@@ -17,28 +17,28 @@ class ProfileContainer extends React.Component {
 			showCategoryModal: true
 		})
   }
-  componentDidMount(){
-    this.getUserInformation()
-  }
-  getUserInformation = () =>{
-    axios.get(constants.basepath + constants.routes.user).then(({data})=>{
-      this.setState({
-        user: {
-          ...data,
-          banks: undefined
-        },
-        banks: data.banks
-      })
-    }).catch(err=>console.error(err))
 
+  onSaveCategory = (category)=>{
+    this.setState({
+      showSpinningCategoryModal: true
+    })
+    axios.post(constants.basepath + constants.routes.categories, {
+      ...category
+    }).then(result=>{
+      this.setState({
+        showCategoryModal: false,
+        showSpinningCategoryModal: false, 
+      })
+      this.props.saveCategory(category)
+    }).catch(err=>console.error(err))
   }
   onCloseCategoryModal =(evt)=>this.setState({showCategoryModal: false})
   
   render() {
-    const { user, banks } = this.state
+    const { user, banks } = this.props
     return (
       <div className="profile-container">
-				<NewCategoryModal show={this.state.showCategoryModal} 
+				<NewCategoryModal save={this.onSaveCategory} loading={this.state.showSpinningCategoryModal} show={this.state.showCategoryModal} 
 				close={this.onCloseCategoryModal} />
         <div className="user-information-container">
           <div className="user-emails">

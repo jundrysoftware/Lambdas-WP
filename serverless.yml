@@ -89,7 +89,7 @@ functions:
             - headers: "Access-Control-Allow-Origin"
   GetUser:
     handler: API/Functions/Users.getUserInformation
-    name: StatsRepo-get-${opt:stage}
+    name: UserRepo-get-${opt:stage}
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
     events:
@@ -100,7 +100,19 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
-
+  SaveCategory:
+    handler: API/Functions/Users.addNewCategory
+    name: UserRepo-Categories-POST-${opt:stage}
+    environment:
+      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
+    events:
+      - http:
+          path: /user/categories
+          method: POST
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
   GetDataCredit:
     handler: API/Functions/DataCredit.get
     name: DataCredit-get-${opt:stage}

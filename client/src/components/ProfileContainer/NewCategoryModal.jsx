@@ -3,9 +3,19 @@ import { Modal, TextField, Button } from "emerald-ui/lib/";
 
 const NewCategoryModal = (props) => {
 	const [categoryLabel, setCategoryLabel] = React.useState("")
+	const [categoryValue, setCategoryValue] = React.useState("")
 	const skipWhiteSpaces = ({target})=>{
-		setCategoryLabel(target.value.replace(/ /ig, ""))
-	}
+		setCategoryValue(target.value.replace(/ /ig, "").toLowerCase())
+  }
+  const onCreateCategory = (evt)=>{
+    if(categoryLabel.trim() === "" || categoryValue.trim() === "") return alert("Hey, agrega datos!");
+    props.save({
+      label: categoryLabel,
+      value: categoryValue
+    })
+    setCategoryLabel("")
+    setCategoryValue("")
+  }
   return (
       <Modal onHide={props.close} show={props.show}>
         <Modal.Header closeButton={true}>
@@ -13,9 +23,12 @@ const NewCategoryModal = (props) => {
         </Modal.Header>
         <Modal.Body>
             <form action="">
-                <TextField label="Valor para mostrar: " />
+                <TextField label="Nombre para mostrar: " 
+                value={categoryLabel}
+								onChange={(evt)=>setCategoryLabel(evt.target.value)}
+                />
                 <TextField 
-								value={categoryLabel}
+								value={categoryValue}
 								onChange={skipWhiteSpaces}
                 label="Nombre de categoria: " />
             </form>
@@ -24,7 +37,7 @@ const NewCategoryModal = (props) => {
           <Button onClick={props.close} shape="flat" color="info">
             Cancelar
           </Button>
-          <Button color="info">Crear categoria</Button>
+          <Button loading={props.loading} color="info" onClick={onCreateCategory}>Crear categoria</Button>
         </Modal.Footer>
       </Modal>
   );

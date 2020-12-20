@@ -21,6 +21,7 @@ class PrepaymentComponent extends React.Component {
         </TableHeader>
         {payments.map((item, i) => (
           <PrepaymentItem
+            categories={this.props.categories}
             onSubmitPrepayment={this.onSubmitPrepayment}
             item={item}
             key={"prepayment-item-" + i + "-" + item.amount}

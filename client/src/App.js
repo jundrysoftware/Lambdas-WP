@@ -6,8 +6,8 @@ import PrepaymentContainer from "./components/prePaymentContainer";
 import SecretContainer from "./components/SecretCodeScreen";
 import GraphContainer from "./components/GraphsContainer";
 import HomeContainer from "./components/HomeContainer";
-import DataCreditContainer from './components/DataCreditContainer';
-import ProfileContainer from './components/ProfileContainer/';
+import DataCreditContainer from "./components/DataCreditContainer";
+import ProfileContainer from "./components/ProfileContainer/";
 import axios from "axios";
 import constants from "./constants";
 class App extends React.Component {
@@ -15,8 +15,10 @@ class App extends React.Component {
     super(props);
     this.state = {
       secret: "null",
+      user: {},
+      banks: [],
       prepayments: [],
-      navbarActive: "profile",
+      navbarActive: "home",
     };
   }
 
@@ -36,10 +38,26 @@ class App extends React.Component {
 
   componentDidMount = () => {
     this.getPrePayments();
+    this.getUserInformation()
   };
 
   onLoginClick = (secret) => {
     console.log(secret);
+  };
+
+  getUserInformation = () => {
+    axios
+      .get(constants.basepath + constants.routes.user)
+      .then(({ data }) => {
+        this.setState({
+          user: {
+            ...data,
+            banks: undefined,
+          },
+          banks: data.banks,
+        });
+      })
+      .catch((err) => console.error(err));
   };
 
   onSavePrepayment = (data) => {
@@ -61,9 +79,18 @@ class App extends React.Component {
       })
       .catch((err) => console.error(err));
   };
-
+  addCategoryToState = (category) =>{
+    const newCategories = this.state.user.categories || []
+    newCategories.push(category) 
+    this.setState({
+      user:{
+        ...this.state.user,
+        categories: newCategories
+      }
+    })
+  }
   render() {
-    const { prepayments, secret } = this.state;
+    const { prepayments, secret, user } = this.state;
 
     if (!secret) return <SecretContainer onLoginClick={this.onLoginClick} />;
     return (
@@ -77,6 +104,7 @@ class App extends React.Component {
         <div className="full-container">
           {this.state.navbarActive === "prepayment" && (
             <PrepaymentContainer
+              categories={user.categories || []}
               onSavePrepayment={this.onSavePrepayment}
               payments={prepayments}
             />
@@ -84,7 +112,9 @@ class App extends React.Component {
           {this.state.navbarActive === "graph" && <GraphContainer />}
           {this.state.navbarActive === "home" && <HomeContainer />}
           {this.state.navbarActive === "datacredit" && <DataCreditContainer />}
-          {this.state.navbarActive === "profile" && <ProfileContainer />}
+          {this.state.navbarActive === "profile" && (
+            <ProfileContainer user={this.state.user} banks={this.state.banks} saveCategory={this.addCategoryToState} />
+          )}
         </div>
       </React.Fragment>
     );

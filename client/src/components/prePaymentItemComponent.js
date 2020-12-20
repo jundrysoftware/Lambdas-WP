@@ -81,24 +81,11 @@ const PrePaymentItemComponent = (props = { item: {} }) => {
                   id="inlineFormCustomSelectPref"
                 >
                   <option defaultValue>Categoria...</option>
-                  <option value="food">Food</option>
-                  <option value="health">Health/Medical</option>
-                  <option value="home">Home</option>
-                  <option value="transportation">Transportation</option>
-                  <option value="personal">Personal</option>
-                  <option value="pets">pets</option>
-                  <option value="utilities">Utilities</option>
-                  <option value="travel">Travel</option>
-                  <option value="debt">Debt</option>
-                  <option value="technology">Tech</option>
-                  <option value="apartment">Apartment</option>
-                  <option value="whim">Whim</option>
-                  <option value="liqueur">Licor</option>
-                  <option value="work">Work</option>
-                  <option value="childs">Childs</option>
-                  <option value="wife">Wife</option>
-                  <option value="gift">Gift</option>
-                  <option value="nn">NN</option>
+                  {
+                    props.categories && props.categories.map(item=>(
+                      <option value={item.value}>{item.label}</option>
+                    ))
+                  }
                 </select>
               </div>
             </div>
