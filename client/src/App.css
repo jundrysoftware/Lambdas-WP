@@ -55,6 +55,9 @@
   background-color:  rgb(136, 167, 255);
   width: 200px;
 }
+.eui-dropdown-menu.show{
+  right: 0 !important;
+}
 .categories-container .category-item p{
   margin: 0px;
   font-weight: 200;
@@ -115,4 +118,32 @@
   left: 10px;
   top: -5px;
   transform: rotate(135deg)
+}
+
+.bank-filters-information p{
+  margin-left: 15px;
+}
+.profile-container {
+  display: flex;
+  justify-content: center;
+}
+.profile-container > div{
+  /* display: flex; */
+
+  width: 70%;
+}
+.user-emails p,
+.user-phones p{
+  margin-left: 10px;
+}
+.user-categories .eui-label{
+  margin-right: 5px;
+  margin-top: 5px; 
+  display: inline-block;
+}
+.add-new-category{
+  cursor: pointer;
+}
+.eui-text-field + .eui-text-field{
+  margin-top: 10px !important;
 }
