@@ -1,9 +1,10 @@
 export default {
-    //basepath: 'http://localhost:3000/prod',
-    basepath: 'https://axon2cv8o9.execute-api.us-east-1.amazonaws.com/prod',
+    basepath: 'http://localhost:3000/dev',
+    // basepath: 'https://r2acs3t0y1.execute-api.us-east-1.amazonaws.com/test',
     routes: {
         prepayments: '/prepayments',
         stats: '/boxflow/stats',
         datacredit: '/datacredit',
+        user: '/user',
     }
 }

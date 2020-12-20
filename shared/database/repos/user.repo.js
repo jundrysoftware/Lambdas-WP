@@ -12,10 +12,10 @@ module.exports.create = async (UserBody = []) => {
     }
 };
 
-module.exports.getUser = async (searchCriteria, {banks = false}) => {
+module.exports.getUser = async (searchCriteria, configs = { }) => {
     try {
         await connect();
-        if(banks) 
+        if(configs.banks) 
             return Users.aggregate([{
                 $match: {
                     ...searchCriteria
