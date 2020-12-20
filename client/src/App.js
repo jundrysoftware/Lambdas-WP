@@ -7,6 +7,7 @@ import SecretContainer from "./components/SecretCodeScreen";
 import GraphContainer from "./components/GraphsContainer";
 import HomeContainer from "./components/HomeContainer";
 import DataCreditContainer from './components/DataCreditContainer';
+import ProfileContainer from './components/ProfileContainer/';
 import axios from "axios";
 import constants from "./constants";
 class App extends React.Component {
@@ -15,7 +16,7 @@ class App extends React.Component {
     this.state = {
       secret: "null",
       prepayments: [],
-      navbarActive: "home",
+      navbarActive: "profile",
     };
   }
 
@@ -83,6 +84,7 @@ class App extends React.Component {
           {this.state.navbarActive === "graph" && <GraphContainer />}
           {this.state.navbarActive === "home" && <HomeContainer />}
           {this.state.navbarActive === "datacredit" && <DataCreditContainer />}
+          {this.state.navbarActive === "profile" && <ProfileContainer />}
         </div>
       </React.Fragment>
     );
