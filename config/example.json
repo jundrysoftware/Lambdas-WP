@@ -2,10 +2,12 @@
     "MONGO_HOST": "cluster0-shard-00-02-abc123.mongodb.net:27017",
     "MONGO_PORT": 27017,
     "MONGO_SECRET": "password",
-    "MONGO_SET"	: "replicas_only",
+    "MONGO_SET": "replicas_only",
     "MONGO_USER": "FlavioAandres",
+    "MONGO_DATABASE":"",
     "SRV_CONFIG": false,
     "EMAIL_USERNAME": "user@domain.tld",
     "EMAIL_PASSWORD": "SECRET",
-    "PHONE_NUMBER":"+573000000000"
+    "PHONE_NUMBER": "+573000000000",
+    "SECRET_KEY": "vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3"
 }

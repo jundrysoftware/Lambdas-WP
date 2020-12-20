@@ -1,30 +1,37 @@
 service: personal-interface
 plugins:
   - serverless-offline
+  
 package: 
   exclude: 
     - client/**
+    - node_modules/puppeteer/.local-chromium/**
+    - node_modules/chrome-aws-lambda/** # The function is provided by the layer
+    - devutils/**
+
 provider:
   name: aws
   runtime: nodejs12.x
   stage: test
-  memorySize: 512 # optional, in MB, default is 1024
+  memorySize: 520  # optional, in MB, default is 1024
   timeout: 15 # optional, in seconds, default is 6
+  environment: #Shared Environments
+    NODE_ENV: ${opt:stage}
+    MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
+    MONGO_PORT: 27017
+    MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
+    MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
+    MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
+    MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
+    MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+    MONGO_SSL: true
+
 functions:
   TwilioIncommingMessage:
     handler: AutomationServices/WhatsAppBot/handlerIncommingMessage.handler
     name: TwilioIncommingMessage-lambda-${opt:stage}
     environment:
-      NODE_ENV: ${opt:stage}
-      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
-      MONGO_PORT: 27017
-      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
-      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
-      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
-      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
-      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
-      MONGO_SSL: true
     events:
       - http:
           path: "/whatsapp/webhook/"
@@ -35,21 +42,13 @@ functions:
             - headers:
                 - Content-Type
                 - Transfer-encoding
+
   GetPrepayments:
     handler: API/Functions/Payments.get
     name: PrepaymentsRepo-get-${opt:stage}
-    environment:
-      NODE_ENV: ${opt:stage}
-      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
-      MONGO_PORT: 27017
-      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
-      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
-      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
-      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
-      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
+    environment: 
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
-      MONGO_SSL: true
     events:
       - http:
           path: /prepayments
@@ -58,21 +57,13 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+
   PutPrepayments:
     handler: API/Functions/Payments.put
     name: PrepaymentsRepo-put-${opt:stage}
     environment:
-      NODE_ENV: ${opt:stage}
-      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
-      MONGO_PORT: 27017
-      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
-      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
-      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
-      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
-      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
-      MONGO_SSL: true
     events:
       - http:
           path: /prepayments
@@ -81,21 +72,13 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+
   GetStats:
     handler: API/Functions/BoxFlow.get
     name: StatsRepo-get-${opt:stage}
     environment:
-      NODE_ENV: ${opt:stage}
-      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
-      MONGO_PORT: 27017
-      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
-      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
-      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
-      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
-      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
       PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
-      MONGO_SSL: true
     events:
       - http:
           path: /boxflow/stats
@@ -104,6 +87,21 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+
+  GetDataCredit:
+    handler: API/Functions/DataCredit.get
+    name: DataCredit-get-${opt:stage}
+    environment:
+      PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
+    events:
+      - http:
+          path: /datacredit
+          method: GET
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
+
   EmailChecker:
     handler: AutomationServices/AutoMailChecker/checker.start
     name: AutomationServices-EmailChecker-${opt:stage}
@@ -114,14 +112,22 @@ functions:
           rate: rate(20 minutes)
           enabled: true
     environment:
-      MONGO_SRV: ${file(./config/${opt:stage}.json):SRV_CONFIG}
-      MONGO_HOST: ${file(./config/${opt:stage}.json):MONGO_HOST}
-      MONGO_PORT: "27017"
-      MONGO_SECRET: ${file(./config/${opt:stage}.json):MONGO_SECRET}
-      MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
-      MONGO_SSL: true
-      MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
-      MONGO_DATABASE: ${file(./config/${opt:stage}.json):MONGO_DATABASE}
       EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
-      NODE_ENV: ${opt:stage}
+
+  DataCreditoScraper:
+    handler: AutomationServices/DataCreditoScraper/scraper.start
+    name: AutomationServices-DataCreditoScraper-${opt:stage}
+    memorySize: 2048  # Recomended, in MB, default is 1024
+    timeout: 60 # Recomended, in seconds, default is 6
+    events:
+      - schedule:
+          name: "cw-start-datacredito-scraper"
+          description: "Function to scraper datacredito data"
+          rate: cron(0 0 15,30 * ? *) # Every Fifteen days, some entities take a time to report updates
+          enabled: true
+    layers:
+      - arn:aws:lambda:${self:provider.region}:764866452798:layer:chrome-aws-lambda:22
+    environment:
+      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
+      SECRET_KEY: ${file(./config/${opt:stage}.json):SECRET_KEY}

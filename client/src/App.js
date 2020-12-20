@@ -6,6 +6,7 @@ import PrepaymentContainer from "./components/prePaymentContainer";
 import SecretContainer from "./components/SecretCodeScreen";
 import GraphContainer from "./components/GraphsContainer";
 import HomeContainer from "./components/HomeContainer";
+import DataCreditContainer from './components/DataCreditContainer';
 import axios from "axios";
 import constants from "./constants";
 class App extends React.Component {
@@ -81,6 +82,7 @@ class App extends React.Component {
           )}
           {this.state.navbarActive === "graph" && <GraphContainer />}
           {this.state.navbarActive === "home" && <HomeContainer />}
+          {this.state.navbarActive === "datacredit" && <DataCreditContainer />}
         </div>
       </React.Fragment>
     );
