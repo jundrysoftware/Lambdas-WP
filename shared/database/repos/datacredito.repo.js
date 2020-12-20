@@ -42,12 +42,12 @@ module.exports.getdataCreditos = async (searchCriteria = {}) => {
         // This function open the mongo connection
         const user = await getUser(searchCriteria.user);
         if (!user) return {};
-        const result = await dataCreditoSchema.find({
+        const result = await dataCreditoSchema.findOne({
             user: user._id,
             ...searchCriteria.datacredit
         })
         await destroy();
-        return result[0];
+        return result;
     } catch (e) {
         console.error(e);
         return {};

@@ -33,7 +33,7 @@ const start = async (event, context) => {
         arrears60daysLast2Year: history.diagnostic.habitoPago.productosConMora60DiasUltimos48Meses,
         arrearsAmount: history.diagnostic.habitoPago.saldoEnMora,
         date: {
-            month: date.getMonth(),
+            month: date.getMonth() + 1,
             year: date.getFullYear()
         },
         user: user._id
