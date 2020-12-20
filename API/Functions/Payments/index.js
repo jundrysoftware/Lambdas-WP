@@ -6,7 +6,6 @@ const {
 } = process.env
 
 module.exports.get = async (event, context, callback) => {
-  const { body } = event;
   let results = {};
   try {
     results = await PaymentRepo.getActive({ phones: PHONE_NUMBER });
@@ -16,7 +15,7 @@ module.exports.get = async (event, context, callback) => {
       headers: {
         'Access-Control-Allow-Origin': '*'
       },
-      message: JSON.stringify(error),
+      body: JSON.stringify(error),
     };
   }
   return context.done(null, {

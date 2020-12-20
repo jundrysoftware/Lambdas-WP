@@ -87,6 +87,19 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+  GetUser:
+    handler: API/Functions/Users.getUserInformation
+    name: StatsRepo-get-${opt:stage}
+    environment:
+      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
+    events:
+      - http:
+          path: /user
+          method: GET
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
 
   GetDataCredit:
     handler: API/Functions/DataCredit.get
@@ -107,7 +120,7 @@ functions:
     name: AutomationServices-EmailChecker-${opt:stage}
     events:
       - schedule:
-          name: "cw-start-email-checker"
+          # name: "cw-start-email-checker"
           description: "Function to connecto to Gmail :D"
           rate: rate(20 minutes)
           enabled: true

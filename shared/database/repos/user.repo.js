@@ -12,15 +12,30 @@ module.exports.create = async (UserBody = []) => {
     }
 };
 
-module.exports.getUser = async (searchCriteria) => {
+module.exports.getUser = async (searchCriteria, {banks = false}) => {
     try {
         await connect();
+        if(banks) 
+            return Users.aggregate([{
+                $match: {
+                    ...searchCriteria
+                }
+            }, {
+                $lookup: {
+                    from: 'banks',
+                    localField: '_id',
+                    foreignField: 'user',
+                    as: 'banks'
+                  }
+            }])
+        
         return await Users.findOne(searchCriteria); 
     } catch (e) {
         console.error(e);
         return {};
     }
 };
+
 module.exports.updateUser = async (User) => {
     throw new Error(`Not implemented Yet`)
 };

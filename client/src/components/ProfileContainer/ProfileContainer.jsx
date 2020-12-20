@@ -54,13 +54,13 @@ class ProfileContainer extends React.Component {
           <div className="user-emails">
             <h2>Emails registrados: </h2>
             {user.emails.map((item) => (
-              <p className="text-muted">{item}</p>
+              <p key={item} className="text-muted">{item}</p>
             ))}
           </div>
           <div className="user-phones">
             <h2>Telefonos registrados: </h2>
             {user.phones.map((item) => (
-              <p className="text-muted">{item}</p>
+              <p key={item} className="text-muted">{item}</p>
             ))}
           </div>
           <div className="user-categories">
