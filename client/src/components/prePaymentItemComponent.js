@@ -1,17 +1,19 @@
 import React from "react";
 import { ExpansionTableRow } from "emerald-ui/lib/";
 import moment from "moment";
+
 const PrePaymentItemComponent = (props = { item: {} }) => {
   const {
     item: { _id: id, amount, text, createdAt, type },
   } = props;
   const parsedDate = moment(createdAt).utc().format("DD MMMM YYYY");
   const [expanded, setExpanded] = React.useState(false);
-  const onClick = (evt) => setExpanded(!expanded);
+  const [isAccepted, setIsAccepted] = React.useState(false)
+  const onClick = (data) => setExpanded(!expanded);
 
-  function handleSubmitButton(evt) {
-    evt.preventDefault();
-    const element = evt.target.elements;
+  function handleSubmitButton(data) {
+    data.preventDefault();
+    const element = data.target.elements;
     const obj = {};
     for (var i = 0; i < element.length; i++) {
       const item = element.item(i);
@@ -19,9 +21,10 @@ const PrePaymentItemComponent = (props = { item: {} }) => {
     }
     obj.type = type
     obj.createdAt = createdAt
-    obj.accepted = true
+    obj.accepted = isAccepted
     props.onSubmitPrepayment(obj)
   }
+
 
   return (
     <ExpansionTableRow onToggle={onClick} expanded={expanded}>
@@ -101,18 +104,20 @@ const PrePaymentItemComponent = (props = { item: {} }) => {
               <div className="form-group col prepayment-button-container">
                 <button
                   className="btn btn-danger send-prepayment-button"
-                  type="button"
+                  type="submit"
+                  onClick={() => setIsAccepted(false)}
                 >
                   {" "}
-                  Eliminar{" "}
+                  Rechazar pago{" "}
                 </button>
               </div>
               <div className="form-group col-md-8 prepayment-button-container">
                 <button
                   className="btn btn-primary send-prepayment-button"
                   type="submit"
+                  onClick={() => setIsAccepted(true)}
                 >
-                  Guardar como pago
+                  Aceptar pago
                 </button>
               </div>
             </div>
