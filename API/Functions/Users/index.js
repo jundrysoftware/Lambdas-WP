@@ -37,6 +37,9 @@ module.exports.addNewCategory = async (event) => {
   if (!body.label || !body.value)
     return {
       statusCode: 400,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
     };
 
   try {
@@ -47,7 +50,10 @@ module.exports.addNewCategory = async (event) => {
       { label: body.label, value: body.value }
     );
     return {
-      statusCode: result ? 200 : 409
+      statusCode: result ? 200 : 409,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },
     }
   } catch (error) {
     console.error(error);
