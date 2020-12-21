@@ -10,7 +10,7 @@ module.exports.get = async (event, context, callback) => {
     const date = new Date()
 
     try {
-        results = await DataCreditRepo.getdataCreditos({ user: { phones: PHONE_NUMBER }, datacredit: { date: { month: date.getMonth().toString(), year: date.getFullYear().toString() } } });
+        results = await DataCreditRepo.getdataCreditos({ user: { phones: PHONE_NUMBER }, datacredit: { date: { month: (date.getMonth() + 1).toString(), year: date.getFullYear().toString() } } });
     } catch (error) {
         return {
             statusCode: "500",

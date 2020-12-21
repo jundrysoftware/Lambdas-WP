@@ -21,6 +21,10 @@ const userSchema = mongoose.Schema(
                 trim: true,
             }
         ],
+        categories: [{
+            label: String, 
+            value: String, 
+        }],
         emails: [
             {
                 type: String,

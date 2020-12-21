@@ -26,7 +26,7 @@ class HomeComponent extends React.Component {
       "?metricType=home&date=" +
       timeAgo;
     const result = await axios.get(url).catch((e) => console.error(e));
-    if ((!result || !result.data || (Array.isArray(result.data))) && !result.data.length) return;
+    if (!result || !result.data) return;
     const categories = [];
     const { latestPayments, expensivePayments, prepayments, totalByCategory } = result.data;
     Object.keys(totalByCategory).forEach((key) => {
