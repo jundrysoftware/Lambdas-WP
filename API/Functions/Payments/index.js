@@ -1,14 +1,15 @@
 const PaymentRepo = require("../../../shared/database/repos/payment.repo");
 const { getUser } = require("../../../shared/database/repos/user.repo");
 const { destroy: detroyMongoConnection } = require("../../../shared/database/mongo");
-const {
-  PHONE_NUMBER
-} = process.env
 
 module.exports.get = async (event, context, callback) => {
   let results = {};
+  const { cognitoPoolClaims } = event
+  const {
+    sub
+  } = cognitoPoolClaims
   try {
-    results = await PaymentRepo.getActive({ phones: PHONE_NUMBER });
+    results = await PaymentRepo.getActive({ sub });
   } catch (error) {
     return {
       statusCode: "500",
@@ -28,18 +29,22 @@ module.exports.get = async (event, context, callback) => {
 };
 
 module.exports.put = async (event, context, callback) => {
-  const { body: bodyString } = event
+  const { body: bodyString, cognitoPoolClaims } = event
   const {
     id,
     description,
     category,
     hide = false,
     accepted = true
-  } = JSON.parse(bodyString)
+  } = bodyString
+
+  const {
+    sub
+  } = cognitoPoolClaims
 
   try {
     if (!id || !description || !category) return { statusCode: 400, body: JSON.stringify({ message: 'Bad request' }) }
-    const user = await getUser({ phones: PHONE_NUMBER })
+    const user = await getUser({ sub })
     const data = await PaymentRepo.updatePayment({
       id,
       user: user._id,

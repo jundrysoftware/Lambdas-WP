@@ -1,9 +1,7 @@
 import React from "react";
-import axios from "axios";
-import constants from "../../constants";
 import Gauge from './gauge'
 import Table from './table'
-
+import { API } from 'aws-amplify'
 class DataCreditComponent extends React.Component {
     _isMounted = false;
 
@@ -19,39 +17,37 @@ class DataCreditComponent extends React.Component {
             arrearsAmount: 0,
             lastUpdate: new Date()
         };
+
     }
     isRenderd = false;
 
     getDataCreditStatistics = async () => {
-        const url =
-            constants.basepath +
-            constants.routes.datacredit;
 
-        const result = await axios.get(url).catch((e) => console.error(e));
-        if ((!result || !result.data || (Array.isArray(result.data))) && !result.data.length) return;
+        API.get('finances', '/datacredit').then(response => {
+            const data = JSON.parse(response.body)
 
-        const {
-            score,
-            comportamiento,
-            amountOfProducts,
-            arrears30daysLastYear,
-            arrears60daysLast2Year,
-            arrearsAmount,
-            updatedAt
-
-        } = result.data
-        if (this._isMounted) {
-            this.setState({
+            const {
                 score,
                 comportamiento,
                 amountOfProducts,
                 arrears30daysLastYear,
                 arrears60daysLast2Year,
                 arrearsAmount,
-                lastUpdate: new Date(updatedAt)
-            });
-        }
+                updatedAt
 
+            } = data
+            if (this._isMounted) {
+                this.setState({
+                    score,
+                    comportamiento,
+                    amountOfProducts,
+                    arrears30daysLastYear,
+                    arrears60daysLast2Year,
+                    arrearsAmount,
+                    lastUpdate: new Date(updatedAt)
+                });
+            }
+        })
     };
 
 
@@ -60,7 +56,7 @@ class DataCreditComponent extends React.Component {
         this.getDataCreditStatistics()
     }
 
-    transformNumber = (number) => Intl.NumberFormat('es-co', {style: 'currency', currency: 'COP'}).format(number)
+    transformNumber = (number) => Intl.NumberFormat('es-co', { style: 'currency', currency: 'COP' }).format(number)
 
     render() {
         const {

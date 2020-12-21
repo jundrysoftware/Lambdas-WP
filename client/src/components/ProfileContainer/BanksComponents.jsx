@@ -1,5 +1,5 @@
 import React from "react";
-import { ExpansionPanelGroup, Avatar, IconButton } from "emerald-ui/lib/";
+import { ExpansionPanelGroup, Avatar } from "emerald-ui/lib/";
 
 export default (props) => {
   return (

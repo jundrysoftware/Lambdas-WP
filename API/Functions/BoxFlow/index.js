@@ -1,11 +1,7 @@
-const { connect: connectToMongo, destroy: detroyMongoConnection, connectToMongoed } = require("../../../shared/database/mongo");
 const PaymentRepo = require("../../../shared/database/repos/payment.repo");
 const { getUser } = require("../../../shared/database/repos/user.repo");
 const _ = require('lodash')
 const moment = require('moment')
-const {
-  PHONE_NUMBER
-} = process.env
 
 const processMonthlyMetrics = async (userId) => {
 
@@ -48,33 +44,34 @@ const processCategoryMetrics = async (userId) => {
   return results
 }
 
-const processHomeMetrics = async (userId, date) =>{
-  const result = await PaymentRepo.getAllByDate({userId, date})
+const processHomeMetrics = async (userId, date) => {
+
+  const result = await PaymentRepo.getAllByDate({ userId, date })
   let latestPayments = [], expensivePayments = [], totalByCategory = [], acceptedPayments = [], prepayments = []
 
   //Split types
-  result.forEach(item=>{
-    if(item.isAccepted)
+  result.forEach(item => {
+    if (item.isAccepted)
       acceptedPayments.push(item)
-    else 
+    else
       prepayments.push(item)
   })
-  
+
   //prepayments 
-  prepayments = prepayments.slice(0,10)
+  prepayments = prepayments.slice(0, 10)
 
   //Latest payments 
-  latestPayments = acceptedPayments.slice(0,10)
+  latestPayments = acceptedPayments.slice(0, 10)
 
   //expensivePayments 
-  expensivePayments = _.orderBy(acceptedPayments, 'amount', ['desc']).slice(0,10)
+  expensivePayments = _.orderBy(acceptedPayments, 'amount', ['desc']).slice(0, 10)
 
   // Group by category
   totalByCategory = _.groupBy(acceptedPayments, 'category')
   return {
-    latestPayments, 
-    expensivePayments, 
-    totalByCategory, 
+    latestPayments,
+    expensivePayments,
+    totalByCategory,
     prepayments
   }
 }
@@ -82,13 +79,16 @@ const processHomeMetrics = async (userId, date) =>{
 //stats endpoint 
 module.exports.get = async (event, context, callback) => {
   let results = [];
-  const { multiValueQueryStringParameters: queryParams } = event;
 
-  const metricType = queryParams && queryParams.metricType ? queryParams.metricType[0] : 'month';
+  const { query: queryParams, cognitoPoolClaims } = event;
+  const { sub } = cognitoPoolClaims
+
+  const metricType = queryParams && queryParams.metricType ? queryParams.metricType : 'month';
   const date = queryParams && queryParams.date ? queryParams.date[0] : moment().subtract(1, 'month').toString()
+
   try {
     // This function open the mongo connection
-    const user = await getUser({ phones: PHONE_NUMBER })
+    const user = await getUser({ sub })
     switch (metricType) {
       case 'month':
         results = await processMonthlyMetrics(user._id)
@@ -99,7 +99,6 @@ module.exports.get = async (event, context, callback) => {
       case 'home':
         results = await processHomeMetrics(user._id, date)
         break;
-
       default:
         break;
     }
@@ -113,6 +112,7 @@ module.exports.get = async (event, context, callback) => {
       message: JSON.stringify(error),
     };
   }
+
   return {
     statusCode: "200",
     headers: {

@@ -8,9 +8,17 @@ const userSchema = mongoose.Schema(
             index: true,
             required: false,
         },
-        secretKey: {
-            iv: String, 
-            content: String, 
+        verified: {
+            type: Boolean,
+            default: false,
+            required: true
+        },
+        sub: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true,
+            index: true
         },
         email: {
             type: String,

@@ -1,10 +1,19 @@
 const UserRepo = require("./../../../shared/database/repos/user.repo");
 const { encrypt, decrypt } = require('../../../shared/utils/crypto')
-module.exports.getUserInformation = async () => {
+
+module.exports.getUserInformation = async (event) => {
   try {
+    const {
+      cognitoPoolClaims
+    } = event
+
+    const {
+      sub
+    } = cognitoPoolClaims
+
     const result = await UserRepo.getUser(
       {
-        emails: process.env.EMAIL_USERNAME,
+        sub
       },
       { banks: true }
     );
@@ -32,8 +41,8 @@ module.exports.getUserInformation = async () => {
 
 module.exports.addNewCategory = async (event) => {
 
-  const body = event.body ? JSON.parse(event.body) : {};
-
+  const body = event.body ? event.body : {};
+  
   if (!body.label || !body.value)
     return {
       statusCode: 400,
@@ -42,10 +51,18 @@ module.exports.addNewCategory = async (event) => {
       },
     };
 
+  const {
+    cognitoPoolClaims
+  } = event
+
+  const {
+    sub
+  } = cognitoPoolClaims
+
   try {
     const result = await UserRepo.createCategory(
       {
-        emails: process.env.EMAIL_USERNAME,
+        sub
       },
       { label: body.label, value: body.value }
     );
@@ -77,8 +94,16 @@ module.exports.checkSecretKey = async (event) => {
     }
   }
 
+  const {
+    cognitoPoolClaims
+  } = event
+
+  const {
+    sub
+  } = cognitoPoolClaims
+
   const user = await UserRepo.getUser({
-    emails: process.env.EMAIL_USERNAME,
+    sub
   })
 
   if (!user.secretKey) return {
@@ -103,4 +128,29 @@ module.exports.checkSecretKey = async (event) => {
       "Access-Control-Allow-Origin": "*",
     }
   }
+}
+
+module.exports.postConfirmation = async (event, context, callback) => {
+
+  const { userName, request } = event
+  const { userAttributes } = request
+  const { sub, email_verified, phone_number, email } = userAttributes
+  try {
+    await UserRepo.create({
+      name: userName,
+      email,
+      sub,
+      phones: [
+        phone_number
+      ],
+      verified: email_verified,
+      emails: [
+        email
+      ]
+    })
+    callback(null, event)
+  } catch (error) {
+    callback(error, event)
+  }
+
 }

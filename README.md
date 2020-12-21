@@ -1,3 +1,39 @@
+## Deploy Client
+
+### Deploy Cognito Pool 
+
+####  Install Amplify CLI
+
+``` bash
+npm i @aws-amplify/cli -g
+```
+
+#### Push Amplify stack
+
+``` bash
+amplify push
+```
+
+#### Install Client Modules
+
+``` bash
+npm install
+```
+
+### Update costants.js
+
+``` js
+export default {
+    apiGateway: {
+        REGION: "us-east-1",
+        URL: "https://XXXXXXX.execute-api.us-east-1.amazonaws.com/STAGE",
+    },
+}
+```
+
+
+> Note: Log in into your aws account and grab the Conginto Manage pool ARN, you will need this for the serverless config.
+
 ## Conection to Mongo Database 
 
 #### SRV Way
@@ -158,10 +194,9 @@ sls deploy --stage [DEV/TEST/PROD]
   + TransferReception: "Bancolombia le informa tecepción de Transferencia"
   + DebitWithdrawal: "Bancolombia le informa Retiro"
 
-
 ## Data Credito
 
-```json
+``` json
 
 {
     "_id": {
@@ -190,10 +225,10 @@ sls deploy --stage [DEV/TEST/PROD]
 }
 ```
 
-
 # Data Credito Scraper DICLAIMER
 
 ``` 
+
 THIS SCRAPER IS A RESEARCH BASED PROJECT, WE DON'T ENCOURAGE THE MISUSE OF THIS TOOL FOR BAD INTENTIONS.
 
 WE ALSO RECOMMEND USERS TO ACQUIRE A PLAN AT www.midatacredito.com TO MAKE USE OF THIS TOOL.

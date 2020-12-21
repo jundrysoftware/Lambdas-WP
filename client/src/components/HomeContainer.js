@@ -1,8 +1,7 @@
 import React from "react";
 import Table from "./TableComponent";
 import moment from "moment";
-import axios from "axios";
-import constants from "../constants";
+import { API } from 'aws-amplify'
 
 class HomeComponent extends React.Component {
   _isMounted = false;
@@ -20,41 +19,39 @@ class HomeComponent extends React.Component {
   isRenderd = false;
 
   getHomeStatistics = async (timeAgo) => {
-    const url =
-      constants.basepath +
-      constants.routes.stats +
-      "?metricType=home&date=" +
-      timeAgo;
-    const result = await axios.get(url).catch((e) => console.error(e));
-    if (!result || !result.data) return;
-    const categories = [];
-    const { latestPayments, expensivePayments, prepayments, totalByCategory } = result.data;
-    Object.keys(totalByCategory).forEach((key) => {
-      const catName = key
-      const total = totalByCategory[key].reduce((prev, curr) => prev + curr.amount, 0)
-      categories.push({
-        name: catName,
-        total
+    API.get('finances', '/boxflow/stats', { queryStringParameters: { metricType: 'home', date: timeAgo } })
+      .then(response => {
+        const data = JSON.parse(response.body)
+        const categories = [];
+        const { latestPayments, expensivePayments, prepayments, totalByCategory } = data;
+        Object.keys(totalByCategory).forEach((key) => {
+          const catName = key
+          const total = totalByCategory[key].reduce((prev, curr) => prev + curr.amount, 0)
+          categories.push({
+            name: catName,
+            total
+          })
+        });
+        const totalTotales = categories.reduce((prev, curr) => prev + curr.total, 0)
+        categories.push({
+          name: 'Total',
+          total: totalTotales
+        })
+        if (this._isMounted) {
+          this.setState({
+            latestPayments,
+            expensivePayments,
+            prepayments,
+            categories
+          });
+        }
       })
-    });
-    const totalTotales = categories.reduce((prev, curr) => prev + curr.total, 0)
-    categories.push({
-      name: 'Total',
-      total: totalTotales
-    })
-    if (this._isMounted) {
-      this.setState({
-        latestPayments,
-        expensivePayments,
-        prepayments,
-        categories
-      });
-    }
+
   };
 
   onChangeDate = (evt, date) => {
     if (evt) evt.preventDefault();
-    const timeAgo = moment().subtract(1, date).toString();
+    const timeAgo = moment().subtract(1, date).toISOString();
     this.getHomeStatistics(timeAgo);
     if (this._isMounted) {
       this.setState({ timeAgo: date });
@@ -70,8 +67,8 @@ class HomeComponent extends React.Component {
   componentWillUnmount() {
     this._isMounted = false;
   }
-  
-  transformNumber = (number) => Intl.NumberFormat('es-co', {style: 'currency', currency: 'COP'}).format(number)
+
+  transformNumber = (number) => Intl.NumberFormat('es-co', { style: 'currency', currency: 'COP' }).format(number)
 
   render() {
     const {

@@ -3,102 +3,98 @@ import "./App.css";
 import "emerald-ui/lib/styles.css";
 import Navbar from "./components/navbar";
 import PrepaymentContainer from "./components/prePaymentContainer";
-import SecretContainer from "./components/SecretCodeScreen";
 import GraphContainer from "./components/GraphsContainer";
 import HomeContainer from "./components/HomeContainer";
 import DataCreditContainer from "./components/DataCreditContainer";
 import ProfileContainer from "./components/ProfileContainer/";
-import axios from "axios";
 import constants from "./constants";
+import Amplify, { Auth, API } from 'aws-amplify';
+import awsconfig from './aws-exports';
+import { AmplifySignOut, withAuthenticator } from '@aws-amplify/ui-react';
+
+
+Amplify.configure({
+  ...awsconfig,
+  API: {
+    endpoints: [
+      {
+        name: "finances",
+        endpoint: constants.apiGateway.URL,
+        region: constants.apiGateway.REGION,
+        custom_header: async () => {
+          return { Authorization: `Bearer ${(await Auth.currentSession()).getIdToken().getJwtToken()}` }
+        },
+      }
+    ]
+  }
+});
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      secret: null,
       user: {},
       banks: [],
       prepayments: [],
       navbarActive: "home",
+      token: null
     };
   }
 
   getPrePayments = () => {
     const self = this;
-    axios
-      .get(constants.basepath + constants.routes.prepayments)
-      .then((res) => {
-        self.setState({
-          prepayments: res.data,
-        });
-      })
-      .catch((e) => {
-        console.error(e);
+    API.get("finances", "/prepayments").then(response => {
+      const data = JSON.parse(response.body)
+      self.setState({
+        prepayments: data,
       });
+    })
   };
 
-  componentDidMount = () => {
-    if(!this.state.secretKey) return; 
+  componentDidMount = async () => {
     this.loadInitialData()
   };
-  
-  loadInitialData(){
+
+  loadInitialData() {
     this.getPrePayments();
     this.getUserInformation()
   }
-  componentDidUpdate(prevProps, prevState){
-    const { secret } = prevState
-    if(!secret && this.state.secret){
-      this.loadInitialData()
-    }
-  }
 
   onLoginClick = (secret) => {
-    axios.post(constants.basepath + constants.routes.secret, {
-      secretKey: secret
-    }).then(result=>{
-      this.setState({secret: true})
-    }).catch(err=>console.error(err))
+    API.post("finances", "/secretKey", { body: { secretKey: secret } }).then(response => {
+      this.setState({ secret: true })
+    })
   };
 
   getUserInformation = () => {
-    axios
-      .get(constants.basepath + constants.routes.user)
-      .then(({ data }) => {
-        this.setState({
-          user: {
-            ...data,
-            banks: undefined,
-          },
-          banks: data.banks,
-        });
-      })
-      .catch((err) => console.error(err));
+    API.get("finances", "/user").then(response => {
+      const data = JSON.parse(response.body)
+      this.setState({
+        user: {
+          ...data,
+          banks: undefined,
+        },
+        banks: data.banks,
+      });
+    })
   };
 
   onSavePrepayment = (data) => {
     const self = this;
-    const url = constants.basepath + constants.routes.prepayments;
-    axios({
-      method: "put",
-      data,
-      url,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+
+    API.put("finances", "/prepayments", { body: data })
       .then(() => {
         const { id } = data;
         self.setState({
           prepayments: self.state.prepayments.filter((item) => item._id !== id),
         });
       })
-      .catch((err) => console.error(err));
+
   };
-  addCategoryToState = (category) =>{
+  addCategoryToState = (category) => {
     const newCategories = this.state.user.categories || []
-    newCategories.push(category) 
+    newCategories.push(category)
     this.setState({
-      user:{
+      user: {
         ...this.state.user,
         categories: newCategories
       }
@@ -106,9 +102,8 @@ class App extends React.Component {
   }
 
   render() {
-    const { prepayments, secret, user } = this.state;
 
-    if (!secret) return <SecretContainer onLoginClick={this.onLoginClick} />;
+    const { prepayments, user } = this.state;
     return (
       <React.Fragment>
         <Navbar
@@ -117,6 +112,7 @@ class App extends React.Component {
             this.setState({ navbarActive: nav });
           }}
         />
+        <AmplifySignOut />
         <div className="full-container">
           {this.state.navbarActive === "prepayment" && (
             <PrepaymentContainer
@@ -137,4 +133,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withAuthenticator(App);

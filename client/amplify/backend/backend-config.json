@@ -1,0 +1,10 @@
+{
+  "auth": {
+    "clientbec096a1": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false
+    }
+  }
+}
