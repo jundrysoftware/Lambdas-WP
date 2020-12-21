@@ -7,7 +7,8 @@ const navbar = ({ updateNav }) => {
       <Navbar.Brand>
         <a>
           <img
-            src=""
+            className="brand-logo-img"
+            src="./imgs/logo.png"
             onClick={(evt) => updateNav(evt, "home")}
             alt="Finances Site"
           />

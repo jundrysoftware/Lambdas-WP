@@ -147,3 +147,6 @@
 .eui-text-field + .eui-text-field{
   margin-top: 10px !important;
 }
+.brand-logo-img{
+  height: 30px;
+}
