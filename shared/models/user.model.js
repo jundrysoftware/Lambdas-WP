@@ -8,6 +8,10 @@ const userSchema = mongoose.Schema(
             index: true,
             required: false,
         },
+        secretKey: {
+            iv: String, 
+            content: String, 
+        },
         email: {
             type: String,
             required: true,
