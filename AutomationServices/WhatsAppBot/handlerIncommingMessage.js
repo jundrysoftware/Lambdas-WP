@@ -2,7 +2,8 @@
 require('dotenv').config()
 const MessagingResponse = require('twilio').twiml.MessagingResponse;
 const bodyParser = require('./src/utils/bodyParser')
-const cashController = require('./src/controllers/finanzasController')
+const cashController = require('./src/controllers/finanzas')
+const { dataCreditoHandler } = require('./src/controllers/datacredito')
 
 const handler = async (event, context) => {
   try {
@@ -23,30 +24,31 @@ const handler = async (event, context) => {
     else
       twiml = new MessagingResponse();
 
-    if (object.Body.toLowerCase().indexOf("reminder") >= 0) {
-      twiml.message("🍁🍁🍁🍁 \nReminder is not avilable yet, we're working hard with some drugs to give you this soon!! ")
-    } else if (object.Body.toLowerCase().indexOf("total+less") >= 0) {
-      let response = await cashController.substractCategories(object)
-      twiml.message(response)
-    } else if (object.Body.toLowerCase().indexOf("total+sum") >= 0) {
-      let response = await cashController.sumCategories(object)
-      twiml.message(response)
-    } else if (object.Body.toLowerCase().indexOf("total") >= 0) {
-      let response = await cashController.listCategory(object)
-      twiml.message(response)
-    } else if (object.Body.toLowerCase().indexOf("cash+update") >= 0) {
-      let response = await cashController.updateCategory(object)
-      twiml.message(response)
-    } else if (object.Body.toLowerCase().indexOf("cash") >= 0) {
-      let response = await cashController.addRecord(object)
-      twiml.message(response)
+    let response
+
+    if (object.Body.toLowerCase().includes("reminder")) {
+      response = "🍁🍁🍁🍁 \nReminder is not avilable yet, we're working hard with some drugs to give you this soon!! "
+    } else if (object.Body.toLowerCase().includes("total+less")) {
+      response = await cashController.substractCategories(object)
+    } else if (object.Body.toLowerCase().includes("total+sum")) {
+      response = await cashController.sumCategories(object)
+    } else if (object.Body.toLowerCase().includes("total")) {
+      response = await cashController.listCategory(object)
+    } else if (object.Body.toLowerCase().includes("cash+update")) {
+      response = await cashController.updateCategory(object)
+    } else if (object.Body.toLowerCase().includes("cash")) {
+      response = await cashController.addRecord(object)
+    } else if (object.Body.toLowerCase().includes("datacredito")) {
+      response = await dataCreditoHandler(object)
     } else {
-      twiml.message(` 
-      Sorry 🤯, i dont have idea what you want to do. Greetings 
-      `)
+      response = `Sorry 🤯, i dont have idea what you want to do. Greetings.`
     }
+
+    twiml.message(response)
+
     let xml = twiml.toString()
-    context.done(null, { 
+
+    context.done(null, {
       statusCode: 200,
       headers: {
         'Content-Type': 'text/xml',
@@ -55,7 +57,13 @@ const handler = async (event, context) => {
     });
   } catch (e) {
     console.log(e)
-    return "something fails with this shit!"
+    context.done(null, {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'text/xml',
+      },
+      body: "something fails with this shit!"
+    });
   }
 
 };
