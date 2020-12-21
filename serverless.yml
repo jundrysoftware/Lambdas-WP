@@ -115,6 +115,7 @@ functions:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+            
   SaveCategory:
     handler: API/Functions/Users.addNewCategory
     name: UserRepo-Categories-POST-${opt:stage}

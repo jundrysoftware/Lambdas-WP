@@ -61,24 +61,40 @@ module.exports.addNewCategory = async (event) => {
   }
 };
 
-module.exports.checkSecretKey = async (event)=>{
+module.exports.checkSecretKey = async (event) => {
   const body = event.body ? JSON.parse(event.body) : {};
 
-  if(!body.secretKey) return {
-    statusCode: 400
+  if (!body.secretKey) return {
+    statusCode: 400,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    }
   }
 
   const user = await UserRepo.getUser({
     emails: process.env.EMAIL_USERNAME,
   })
 
-  if(!user.secretKey) return {statusCode: 409}
+  if (!user.secretKey) return {
+    statusCode: 409,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    }
+  }
 
   const userKey = decrypt(user.secretKey)
 
-  if(userKey !== body.secretKey) return { statusCode: 401 }
+  if (userKey !== body.secretKey) return {
+    statusCode: 401,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    }
+  }
 
   return {
-    statusCode: 200
+    statusCode: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+    }
   }
 }
