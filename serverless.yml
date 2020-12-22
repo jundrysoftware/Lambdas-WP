@@ -8,6 +8,7 @@ package:
     - node_modules/puppeteer/.local-chromium/**
     - node_modules/chrome-aws-lambda/** # The function is provided by the layer
     - devutils/**
+    - AutomationServices/AutoMailChecker/**
 
 provider:
   name: aws
@@ -25,6 +26,21 @@ provider:
     MONGO_SET: ${file(./config/${opt:stage}.json):MONGO_SET}
     MONGO_USER: ${file(./config/${opt:stage}.json):MONGO_USER}
     MONGO_SSL: true
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:GetObject
+      Resource:
+        - Fn::Join:
+          - ''
+          -
+            - Fn::GetAtt: [EmailsBucket, Arn]
+            - '/*'
+    - Effect: Allow
+      Action: ses:SendRawEmail
+      Resource:
+        - "*"
 
 functions:
   TwilioIncommingMessage:
@@ -195,20 +211,28 @@ functions:
     handler: API/Functions/Users.postConfirmation
     name: PostConfirmationUser-${opt:stage}
 
+  ProcessEmails:
+    handler: API/Functions/Emails.process
+    name: ProcessEmail-${opt:stage}
+    environment: 
+      BUCKETNAME: finance-emails-${opt:stage}
 
-  EmailChecker:
-    handler: AutomationServices/AutoMailChecker/checker.start
-    name: AutomationServices-EmailChecker-${opt:stage}
-    events:
-      - schedule:
-          name: "cw-start-email-checker"
-          description: "Function to connecto to Gmail :D"
-          rate: rate(20 minutes)
-          enabled: true
-    environment:
-      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
-      EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
-      
+  #  
+  # DEPRECATED
+  #
+  # EmailChecker:
+  #   handler: AutomationServices/AutoMailChecker/checker.start
+  #   name: AutomationServices-EmailChecker-${opt:stage}
+  #   events:
+  #     - schedule:
+  #         name: "cw-start-email-checker"
+  #         description: "Function to connecto to Gmail :D"
+  #         rate: rate(20 minutes)
+  #         enabled: true
+  #   environment:
+  #     EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
+  #     EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
+
   DataCreditoScraper:
     handler: AutomationServices/DataCreditoScraper/scraper.start
     name: AutomationServices-DataCreditoScraper-${opt:stage}
@@ -225,3 +249,58 @@ functions:
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       SECRET_KEY: ${file(./config/${opt:stage}.json):SECRET_KEY}
+
+resources:
+  Resources:
+    GiveSESPermissionToInvokeProcessEmailLambdaFunction:
+      Type: AWS::Lambda::Permission
+      Properties:
+        FunctionName: { "Fn::GetAtt": ["ProcessEmailsLambdaFunction", "Arn"] }
+        Principal: ses.amazonaws.com
+        Action: "lambda:InvokeFunction"
+        SourceAccount: { Ref: AWS::AccountId }
+    
+    EmailsBucket:
+     Type: AWS::S3::Bucket
+     Properties:
+        BucketName: finance-emails-${opt:stage}
+    EmailsBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: { Ref: EmailsBucket }
+        PolicyDocument:
+          Statement:
+            -
+              Action: 
+                - s3:PutObject
+              Effect: Allow
+              Resource:
+                Fn::Join:
+                  - ""
+                  -
+                    - { "Fn::GetAtt": ["EmailsBucket", "Arn"] }
+                    - "/*"
+              Principal:
+                Service: ses.amazonaws.com
+              Condition:
+                StringEquals:
+                  aws:Referer: { Ref: AWS::AccountId }
+
+    SesLambdaRule:
+      Type: AWS::SES::ReceiptRule
+      DependsOn:
+        - GiveSESPermissionToInvokeProcessEmailLambdaFunction
+        - EmailsBucketPolicy
+      Properties:
+        Rule:
+          Enabled: true
+          ScanEnabled: true
+          Name: finance-email-rule-${opt:stage}
+          Recipients: ${file(./config/${opt:stage}.json):EMAIL_RECIPIENTS}
+          Actions:
+            - LambdaAction:
+                FunctionArn:
+                  { "Fn::GetAtt": ["ProcessEmailsLambdaFunction", "Arn"] }
+            - S3Action:
+                BucketName: finance-emails-${opt:stage}
+        RuleSetName: default-rule-set

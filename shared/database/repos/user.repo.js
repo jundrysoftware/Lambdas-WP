@@ -1,4 +1,3 @@
-const { search } = require("../../../AutomationServices/AutoMailChecker/utils");
 const userModel = require("../../models/user.model");
 const Users = require("../../models/user.model");
 const { connect, destroy, isConnected } = require("../mongo");

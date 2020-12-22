@@ -1,3 +1,11 @@
+## Deploy SES email parser
+
+```
+    1. Verify a domain at https://console.aws.amazon.com/ses/home?region=us-east-1#verified-senders-domain:
+    2. sls deploy --stage prod # Make sure about the config parameters
+    3. Forward your messages to the EMAIL_RECIPIENTS
+```
+
 ## Deploy Client
 
 ### Deploy Cognito Pool 
@@ -158,9 +166,6 @@ sls deploy --stage [DEV/TEST/PROD]
         "ignore_phrase": "Bancolombia le informa que su factura inscrita",
         "index_value": {
             "$numberLong": "0"
-        },
-        "user": {
-            "$oid": "5fc43e5e607f370ee4f66308"
         }
     }
     // PSE
@@ -178,9 +183,6 @@ sls deploy --stage [DEV/TEST/PROD]
         "ignore_phrase": "Estado de la transacción: Rechazada",
         "index_value": {
             "$numberLong": "0"
-        },
-        "user": {
-            "$oid": "5fc43e5e607f370ee4f66308"
         }
     }
 ]

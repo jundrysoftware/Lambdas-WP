@@ -21,8 +21,7 @@ const BankSchema = mongoose.Schema(
             type: String
         },
         ignore_phrase: { type: String, default: null },
-        index_value: { type: Number },
-        user: { type: mongoose.Types.ObjectId, required: true }
+        index_value: { type: Number }
     },
     {
         timestamps: true,
