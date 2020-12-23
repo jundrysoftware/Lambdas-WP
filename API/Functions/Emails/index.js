@@ -9,8 +9,12 @@ const utils = require('./utils')
 module.exports.process = async (event, context, callback) => {
     try {
         const mailEvent = event.Records[0].ses
-        const { source, messageId, timestamp, commonHeaders } = mailEvent.mail
-        let { subject } = commonHeaders
+        //Informative log until all is working as expected.
+        console.log(JSON.stringify(mailEvent))
+        const { messageId, timestamp, commonHeaders } = mailEvent.mail
+        let { subject, from } = commonHeaders
+
+        const source = getEmail(from)
 
         // Removing forward subject label
         if (subject.includes('Fwd: ')) {
@@ -39,11 +43,11 @@ module.exports.process = async (event, context, callback) => {
                     const filter = filters[index];
 
                     const res = utils.search(result.html, filter.phrase, filter.parser, ignore_phrase, bankName)
-                    
+
                     if (!res) continue
 
                     const user = await getUser({ emails: source })
-                    
+
                     const prePaymentObj = {
                         bank: bankName,
                         source: res.TRANSACTION_SOURCE,
@@ -77,4 +81,16 @@ module.exports.process = async (event, context, callback) => {
     } catch (error) {
         console.log(error)
     }
+}
+
+
+const getEmail = (from) => {
+    let source = undefined;
+    if (Array.isArray(from) && from.length > 0) {
+        source = from[0].match(/\<(.*?)\>/g)
+        if (Array.isArray(source) && source.length > 0) {
+            source = source[0].replace('<', '').replace('>', '')
+        }
+    }
+    return source
 }
