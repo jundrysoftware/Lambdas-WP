@@ -12,9 +12,9 @@ module.exports.process = async (event, context, callback) => {
         //Informative log until all is working as expected.
         console.log(JSON.stringify(mailEvent))
         const { messageId, timestamp, commonHeaders } = mailEvent.mail
-        let { subject, from } = commonHeaders
+        let { subject, to } = commonHeaders
 
-        const source = getEmail(from)
+        const source = to[0]
 
         // Removing forward subject label
         if (subject.includes('Fwd: ')) {
