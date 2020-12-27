@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import ApexCharts from "apexcharts";
-import axios from "axios";
-import constants from "../constants";
+import { API } from 'aws-amplify'
 class GraphContainer extends Component {
   constructor(props) {
     super(props);
@@ -28,42 +27,36 @@ class GraphContainer extends Component {
   };
 
   getMonthlyMetrics = () =>
-    axios({
-      url: constants.basepath + constants.routes.stats,
-      method: "get",
-    })
-      .then((res) => {
-        const data = res.data;
-        const [amounts, months] = data.reduce(
-          (prev, current) => {
-            prev[0].push(current.total.toFixed(2));
-            prev[1].push(current.month);
-            return prev;
-          },
-          [[], []]
-        );
-        this.renderGraph(
-          {
-            categories: months,
-            series: [
-              {
-                name: "Gastos",
-                data: amounts,
-              },
-            ],
-          },
-          "graph-montly"
-        );
-      })
-      .catch((err) => console.error(err));
+    API.get("finances", '/boxflow/stats').then(response => {
+      const data = JSON.parse(response.body)
+      const [amounts, months] = data.reduce(
+        (prev, current) => {
+          prev[0].push(current.total.toFixed(2));
+          prev[1].push(current.month);
+          return prev;
+        },
+        [[], []]
+      );
+      this.renderGraph(
+        {
+          categories: months,
+          series: [
+            {
+              name: "Gastos",
+              data: amounts,
+            },
+          ],
+        },
+        "graph-montly"
+      );
+    });
 
   getMonthlyCategories = () =>
-    axios({
-      url: constants.basepath + constants.routes.stats + "?metricType=category",
-      method: "get",
-    })
+    API.get('finances', '/boxflow/stats', { queryStringParameters: { metricType: 'category' } })
       .then((res) => {
-        const data = res.data;
+        const data = JSON.parse(res.body);
+
+        console.log(data)
         const monthsArray = [];
         const datasets = data.map((item) => {
           return {
@@ -100,6 +93,7 @@ class GraphContainer extends Component {
             data: joined,
           };
         });
+        
         this.renderGraph(
           {
             categories: uniqueMonths,
@@ -110,6 +104,7 @@ class GraphContainer extends Component {
         );
       })
       .catch((err) => console.error(err));
+
 
   componentDidMount = () => {
     this.getMonthlyMetrics();

@@ -2,8 +2,7 @@ import React from "react";
 import { Label } from "emerald-ui/lib/";
 import NewCategoryModal from "./NewCategoryModal";
 import BanksComponent from "./BanksComponents";
-import axios from 'axios'
-import constants from '../../constants'
+import { API } from 'aws-amplify'
 class ProfileContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -11,35 +10,35 @@ class ProfileContainer extends React.Component {
       user: {},
       banks: []
     };
-	}
-	onCreateCategoryClick = (evt)=>{
-		this.setState({
-			showCategoryModal: true
-		})
+  }
+  onCreateCategoryClick = (evt) => {
+    this.setState({
+      showCategoryModal: true
+    })
   }
 
-  onSaveCategory = (category)=>{
+  onSaveCategory = (category) => {
     this.setState({
       showSpinningCategoryModal: true
     })
-    axios.post(constants.basepath + constants.routes.categories, {
+    API.post('finances', '/user/categories', {body: {
       ...category
-    }).then(result=>{
+    }}).then(result => {
       this.setState({
         showCategoryModal: false,
-        showSpinningCategoryModal: false, 
+        showSpinningCategoryModal: false,
       })
       this.props.saveCategory(category)
-    }).catch(err=>console.error(err))
+    }).catch(err => console.error(err))
   }
-  onCloseCategoryModal =(evt)=>this.setState({showCategoryModal: false})
-  
+  onCloseCategoryModal = (evt) => this.setState({ showCategoryModal: false })
+
   render() {
     const { user, banks } = this.props
     return (
       <div className="profile-container">
-				<NewCategoryModal save={this.onSaveCategory} loading={this.state.showSpinningCategoryModal} show={this.state.showCategoryModal} 
-				close={this.onCloseCategoryModal} />
+        <NewCategoryModal save={this.onSaveCategory} loading={this.state.showSpinningCategoryModal} show={this.state.showCategoryModal}
+          close={this.onCloseCategoryModal} />
         <div className="user-information-container">
           <div className="user-emails">
             <h2>Emails registrados: </h2>
@@ -58,7 +57,7 @@ class ProfileContainer extends React.Component {
             {user.categories && user.categories.map((category) => (
               <Label>{category.label}</Label>
             ))}
-            <Label onClick={this.onCreateCategoryClick}className="add-new-category" color="primary">
+            <Label onClick={this.onCreateCategoryClick} className="add-new-category" color="primary">
               {" "}
               ➕ Añadir{" "}
             </Label>
@@ -68,7 +67,7 @@ class ProfileContainer extends React.Component {
           <div className="bank-lists-container">
             <h2>Bancos: </h2>
             {
-              banks.map(bank=>(
+              banks.map(bank => (
                 <BanksComponent {...bank} key={bank._id} />
               ))
             }

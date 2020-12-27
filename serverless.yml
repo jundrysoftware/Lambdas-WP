@@ -46,103 +46,155 @@ functions:
   GetPrepayments:
     handler: API/Functions/Payments.get
     name: PrepaymentsRepo-get-${opt:stage}
-    environment:
-      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
-      PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
     events:
       - http:
           path: /prepayments
           method: GET
+          integration: lambda
           cors:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
 
   PutPrepayments:
     handler: API/Functions/Payments.put
     name: PrepaymentsRepo-put-${opt:stage}
-    environment:
-      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
-      PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
     events:
       - http:
           path: /prepayments
           method: PUT
+          integration: lambda
           cors:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
 
   GetStats:
     handler: API/Functions/BoxFlow.get
     name: StatsRepo-get-${opt:stage}
-    environment:
-      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
-      PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
     events:
       - http:
           path: /boxflow/stats
           method: GET
+          integration: lambda
           cors:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
 
   GetUser:
     handler: API/Functions/Users.getUserInformation
     name: UserRepo-get-${opt:stage}
-    environment:
-      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
     events:
       - http:
           path: /user
           method: GET
+          integration: lambda
           cors:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
 
   CheckUserSecret:
     handler: API/Functions/Users.checkSecretKey
     name: UserRepo-post-secretKey-${opt:stage}
-    environment:
-      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
     events:
       - http:
           path: /user/secret
           method: POST
+          integration: lambda
           cors:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
-            
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
+
   SaveCategory:
     handler: API/Functions/Users.addNewCategory
     name: UserRepo-Categories-POST-${opt:stage}
-    environment:
-      EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
     events:
       - http:
           path: /user/categories
           method: POST
+          integration: lambda
           cors:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
 
   GetDataCredit:
     handler: API/Functions/DataCredit.get
     name: DataCredit-get-${opt:stage}
-    environment:
-      PHONE_NUMBER: ${file(./config/${opt:stage}.json):PHONE_NUMBER}
     events:
       - http:
           path: /datacredit
           method: GET
+          integration: lambda
           cors:
             - enabled: true
             - origin: "*"
             - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
+
+  # Create the user on the MongoDB database
+  PostConfirmationUser:
+    handler: API/Functions/Users.postConfirmation
+    name: PostConfirmationUser-${opt:stage}
+
 
   EmailChecker:
     handler: AutomationServices/AutoMailChecker/checker.start
@@ -156,7 +208,7 @@ functions:
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
-
+      
   DataCreditoScraper:
     handler: AutomationServices/DataCreditoScraper/scraper.start
     name: AutomationServices-DataCreditoScraper-${opt:stage}

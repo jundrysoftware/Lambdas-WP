@@ -1,16 +1,15 @@
 const DataCreditRepo = require("../../../shared/database/repos/datacredito.repo");
 
-const {
-    PHONE_NUMBER
-} = process.env
-
 module.exports.get = async (event, context, callback) => {
-    const { body } = event;
+    const { cognitoPoolClaims } = event;
+    const {
+        sub
+    } = cognitoPoolClaims
     let results = {};
     const date = new Date()
 
     try {
-        results = await DataCreditRepo.getdataCreditos({ user: { phones: PHONE_NUMBER }, datacredit: { date: { month: (date.getMonth() + 1).toString(), year: date.getFullYear().toString() } } });
+        results = await DataCreditRepo.getdataCreditos({ user: { sub }, datacredit: { date: { month: (date.getMonth() + 1).toString(), year: date.getFullYear().toString() } } });
     } catch (error) {
         return {
             statusCode: "500",
