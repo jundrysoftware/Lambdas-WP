@@ -102,5 +102,3 @@ const start = async (event, context) => {
 module.exports = {
     start
 }
-
-start();
