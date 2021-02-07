@@ -23,7 +23,7 @@ const start = async (event, context) => {
         throw new Error('Users are not configured yet, please create the user document')
 
     console.info('Getting Banks Config')
-    const banks = await getBanks({ user: user._id });
+    const banks = await getBanks({});
 
     if (!banks)
         throw new Error('Banks are not configured yet, please create the bank documents')

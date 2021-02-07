@@ -3,10 +3,8 @@ String.prototype.splice = function (idx, rem, str) {
 
 };
 
-
-
 module.exports.amountParser = (value) => {
-    value = value.replace('=','').trim()
+    value = value.replace('=', '').trim()
     // Check for decimal numbers
     if (value.includes(',') && value.substring(value.lastIndexOf(',') + 1).length === 2) {
         const decimal = value.substring(value.lastIndexOf(',') + 1)
