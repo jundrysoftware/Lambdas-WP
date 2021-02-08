@@ -58,7 +58,8 @@ const getSession = async (user, password, seccondpass) => {
             await page.click('button[type=submit]')
 
         } catch (error) {
-
+            console.log(error)
+            reject(error)
         }
 
         await browser.close()
