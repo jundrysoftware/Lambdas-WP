@@ -2,11 +2,11 @@ const paymentRepo = require('../../shared/database/repos/payment.repo')
 const moment = require('moment')
 const twilio = require('twilio')
 
-const ACCOUNT_SID = process.env.TWILIO_ACCESS_TOKEN || "ACad2018f4db8a989f76b83d55e83d19ca"
-const AUTH_TOKEN = process.env.TWILIO_SECTRET_KEY || "d6cf344571a1da5fd935c5ce346190f0"
+const ACCOUNT_SID = process.env.TWILIO_ACCESS_TOKEN 
+const AUTH_TOKEN = process.env.TWILIO_SECTRET_KEY 
 
 const NUMBER_FROM = 'whatsapp:+14155238886'
-const NUMBER_TO = 'whatsapp:+573022939843' 
+const NUMBER_TO = 'whatsapp:+3000000' 
 const transformNumber = (number) => Intl.NumberFormat('es-co').format(number)
 
 module.exports.start = async (event) => {
