@@ -41,6 +41,6 @@ module.exports.start = async (event) => {
         execution: "SUCCESS"
     }
     /** TODO
-     * In Monthly execution, check the average or prediction for each category in the next month
+     * In Monthly execution, check the average or prediction for category
      */
 }
