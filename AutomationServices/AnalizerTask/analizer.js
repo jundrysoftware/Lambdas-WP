@@ -29,17 +29,13 @@ module.exports.start = async (event) => {
         return prev + `👉🏼 ${curr.dayOfWeek} with: $${transformNumber(curr.total)}\n`
     },`🎉 Your ${ExecutionType.toLowerCase()} Report is here! \n`)
 
-    const response = await client.messages.create({
+    await client.messages.create({
         body: BodyToWhatsApp,
         from: NUMBER_FROM,
         to: NUMBER_TO
     })
     
-    console.log(response)
-    
-    return {
-        execution: "SUCCESS"
-    }
+    return; 
     /** TODO
      * In Monthly execution, check the average or prediction for category
      */
