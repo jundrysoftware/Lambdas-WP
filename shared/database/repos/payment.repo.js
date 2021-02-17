@@ -153,6 +153,5 @@ module.exports.getMostSpensiveDay = async (date) => {
   },{
     $sort: {"total": -1}   
   }])
-  await destroy()
   return result
 }
