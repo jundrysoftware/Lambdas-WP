@@ -1,6 +1,7 @@
 import React from "react";
 import Table from "./TableComponent";
 import moment from "moment";
+import formatCash from '../utils/formatCash';
 import { API } from 'aws-amplify'
 
 class HomeComponent extends React.Component {
@@ -68,7 +69,6 @@ class HomeComponent extends React.Component {
     this._isMounted = false;
   }
 
-  transformNumber = (number) => Intl.NumberFormat('es-co', { style: 'currency', currency: 'COP' }).format(number)
 
   render() {
     const {
@@ -104,7 +104,7 @@ class HomeComponent extends React.Component {
             categories.map((item, index) => (
               <div className="category-item" key={`item-${index}`}>
                 <p>
-                  {item.name}: <span>{this.transformNumber(item.total)}</span>
+                  {item.name}: <span>{formatCash(item.total)}</span>
                 </p>
               </div>
             ))
