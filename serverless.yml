@@ -229,7 +229,7 @@ functions:
   HideNoAcceptedPayments:
     handler: AutomationServices/AutoHidePayments/handler.start
     description: "Function to hide payments not accepted after 30 days"
-    name: AutomationServices-EmailChecker-${opt:stage}
+    name: AutomationServices-HideNoAcceptedPayments-${opt:stage}
     events:
       - schedule:
           name: "cw-hide-payments-not-accepted"
