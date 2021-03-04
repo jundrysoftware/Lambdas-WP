@@ -225,3 +225,13 @@ functions:
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       SECRET_KEY: ${file(./config/${opt:stage}.json):SECRET_KEY}
+
+  HideNoAcceptedPayments:
+    handler: AutomationServices/AutoHidePayments/handler.start
+    description: "Function to hide payments not accepted after 30 days"
+    name: AutomationServices-EmailChecker-${opt:stage}
+    events:
+      - schedule:
+          name: "cw-hide-payments-not-accepted"
+          rate: rate(1 day)
+          enabled: true
