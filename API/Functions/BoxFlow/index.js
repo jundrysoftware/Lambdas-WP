@@ -44,7 +44,7 @@ const processCategoryMetrics = async (userId) => {
   return results
 }
 
-module.exports.processHomeMetrics = async (userId, date) => {
+const processHomeMetrics = async (userId, date) => {
 
   const result = await PaymentRepo.getAllByDate({ userId, date })
   let latestPayments = [], expensivePayments = [], totalByCategory = [], acceptedPayments = [], prepayments = []
