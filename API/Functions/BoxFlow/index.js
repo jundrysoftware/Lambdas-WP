@@ -76,6 +76,8 @@ const processHomeMetrics = async (userId, date) => {
   }
 }
 
+module.exports.processHomeMetrics = processHomeMetrics; 
+
 //stats endpoint 
 module.exports.get = async (event, context, callback) => {
   let results = [];
