@@ -48,7 +48,6 @@ const processHomeMetrics = async (userId, date) => {
 
   const result = await PaymentRepo.getAllByDate({ userId, date })
   let latestPayments = [], expensivePayments = [], totalByCategory = [], acceptedPayments = [], prepayments = []
-
   //Split types
   result.forEach(item => {
     if (item.isAccepted)
@@ -79,13 +78,10 @@ const processHomeMetrics = async (userId, date) => {
 //stats endpoint 
 module.exports.get = async (event, context, callback) => {
   let results = [];
-
   const { query: queryParams, cognitoPoolClaims } = event;
   const { sub } = cognitoPoolClaims
-
   const metricType = queryParams && queryParams.metricType ? queryParams.metricType : 'month';
-  const date = queryParams && queryParams.date ? queryParams.date[0] : moment().subtract(1, 'month').toString()
-
+  const date = queryParams && queryParams.date ? queryParams.date : moment().subtract(1, 'month').toString()
   try {
     // This function open the mongo connection
     const user = await getUser({ sub })
@@ -94,12 +90,10 @@ module.exports.get = async (event, context, callback) => {
         results = await processMonthlyMetrics(user._id)
         break;
       case 'category':
-        results = await processCategoryMetrics(user._id)
+        results = await processCategoryMetrics(user._id, date)
         break;
       case 'home':
         results = await processHomeMetrics(user._id, date)
-        break;
-      default:
         break;
     }
   } catch (error) {

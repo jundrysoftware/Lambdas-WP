@@ -201,7 +201,7 @@ functions:
     name: AutomationServices-EmailChecker-${opt:stage}
     events:
       - schedule:
-          name: "cw-start-email-checker"
+          # name: "cw-start-email-checker"
           description: "Function to connecto to Gmail :D"
           rate: rate(20 minutes)
           enabled: true

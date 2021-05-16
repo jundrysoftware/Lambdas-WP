@@ -30,9 +30,13 @@ module.exports.getUser = async (searchCriteria, configs = { }) => {
                   }
             }])
         
-        return await Users.findOne(searchCriteria); 
+        const result = await Users.findOne(searchCriteria);
+        return result; 
     } catch (e) {
         console.error(e);
+        try {
+            await destroy()
+        } catch (error) {}
         return {};
     }
 };
@@ -50,6 +54,5 @@ module.exports.createCategory = async (userCriteria, category) =>{
             categories: { ...category }
         }
     })
-    await destroy()
     return result.nModified > 0 
 }

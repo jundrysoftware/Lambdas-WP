@@ -16,8 +16,8 @@ module.exports.createMultiple = async (PaymentBodies = []) => {
 
 module.exports.getAllByDate = async ({ userId, date }) => {
   if (!userId) return [];
-
-  return Payments.find(
+  await connect()
+  const result = await Payments.find(
     {
       createdAt: { $gte: new Date(date) },
       user: userId,
@@ -25,11 +25,13 @@ module.exports.getAllByDate = async ({ userId, date }) => {
     },
     { amount: 1, description: 1, createdAt: 1, category: 1, isAccepted: 1 }
   ).sort({ createdAt: -1 });
+  return result; 
 };
 
 //get all prepayments without category
 module.exports.getActive = async (criteria) => {
   try {
+    await connect()
     // This function open the mongo connection
     const user = await getUser(criteria);
     if (!user) return [];
@@ -38,7 +40,6 @@ module.exports.getActive = async (criteria) => {
       isAccepted: { $in: [false, null] },
       isHidden: { $in: [undefined, false] },
     });
-    await destroy();
     return result.reverse();
   } catch (e) {
     console.error(e);
@@ -47,7 +48,8 @@ module.exports.getActive = async (criteria) => {
 };
 module.exports.updatePayment = async (Payment) => {
   if (!Payment.id) throw new Error("PaymentsRepo::missing id for Payment");
-  return Payments.updateOne(
+  await connect()
+  const result = await Payments.updateOne(
     { _id: Payment.id, user: Payment.user },
     {
       isAccepted: Payment.isAccepted,
@@ -56,10 +58,12 @@ module.exports.updatePayment = async (Payment) => {
       category: Payment.category,
     }
   );
+  await destroy()
 };
 
 module.exports.getByCategories = async (userId) => {
-  return await Payments.aggregate([
+  await connect()
+  const result =  await Payments.aggregate([
     {
       $match: {
         user: userId,
@@ -81,10 +85,12 @@ module.exports.getByCategories = async (userId) => {
       },
     },
   ]);
+  return result
 };
 
 module.exports.getByMonth = async (userId) => {
-  return Payments.aggregate([
+  await connect()
+  const result = await Payments.aggregate([
     {
       $match: {
         user: userId,
@@ -106,4 +112,5 @@ module.exports.getByMonth = async (userId) => {
       },
     },
   ]);
+  return result; 
 };
