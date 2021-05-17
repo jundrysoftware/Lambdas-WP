@@ -2,6 +2,7 @@ import React from "react";
 import Table from "./TableComponent";
 import moment from "moment";
 import formatCash from '../utils/formatCash';
+import ModalShowCategories from './ModalShowCategories/ModalShowCategories'
 import { API } from 'aws-amplify'
 
 class HomeComponent extends React.Component {
@@ -14,7 +15,7 @@ class HomeComponent extends React.Component {
       expensivePayments: [],
       totalByCategory: [],
       prepayments: [],
-      categories: []
+      categories: [] 
     };
   }
   isRenderd = false;
@@ -43,11 +44,11 @@ class HomeComponent extends React.Component {
             latestPayments,
             expensivePayments,
             prepayments,
-            categories
+            categories,
+            totalByCategory
           });
         }
       })
-
   };
 
   onChangeDate = (evt, date) => {
@@ -69,6 +70,12 @@ class HomeComponent extends React.Component {
     this._isMounted = false;
   }
 
+  showCategoriesContainer(evt, category) {
+    if (evt) evt.preventDefault();
+    this.setState({ showCategoriesModal: true, choosedCategoryModal: category }); 
+    
+  }
+
 
   render() {
     const {
@@ -76,43 +83,51 @@ class HomeComponent extends React.Component {
       latestPayments,
       expensivePayments,
       categories,
+      choosedCategoryModal,
+      totalByCategory,
     } = this.state;
     return (
       <div className="home-container">
+        <ModalShowCategories 
+          show={ this.state.showCategoriesModal }
+          category={ this.state.choosedCategoryModal }
+          data={ choosedCategoryModal ? totalByCategory[choosedCategoryModal]: [] }
+          close={()=>this.setState({ showCategoriesModal: null, choosedCategoryModal: null })}
+        />
         <div className="container-timming-buton">
           <button
             onClick={(evt) => this.onChangeDate(evt, "week")}
             className={timeAgo === "week" ? "selected" : ""}
           >
-            Last 1 Week
+            Last Week
           </button>
           <button
             onClick={(evt) => this.onChangeDate(evt, "month")}
             className={timeAgo === "month" ? "selected" : ""}
           >
-            Last 1 Month
+            Last Month
           </button>
           <button
             onClick={(evt) => this.onChangeDate(evt, "year")}
             className={timeAgo === "year" ? "selected" : ""}
           >
-            Last 1 Year
+            Last Year
           </button>
         </div>
         <div className="categories-container">
           {
             categories.map((item, index) => (
-              <div className="category-item" key={`item-${index}`}>
+              <button onClick={(evt)=>this.showCategoriesContainer(evt, item.name)} className="category-item" key={`item-${index}`}>
                 <p>
                   {item.name}: <span>{formatCash(item.total)}</span>
                 </p>
-              </div>
+              </button>
             ))
           }
         </div>
         <div className="stats-container">
-          <Table title="Ultimas compras" content={latestPayments} />
-          <Table title="Compras mas hptas..." content={expensivePayments} />
+          <Table title="Last payments: " content={latestPayments} />
+          <Table title="Expensive payments:" content={expensivePayments} />
         </div>
       </div>
     );

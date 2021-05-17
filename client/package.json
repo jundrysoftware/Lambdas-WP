@@ -26,7 +26,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "deploy": "npm run build && aws s3 sync build/ s3://finances.flavioaandres.com --acl public-read",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy:distribution": "aws cloudfront create-invalidation --paths \"/*\" --distribution-id"
   },
   "eslintConfig": {
     "extends": "react-app"
