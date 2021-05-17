@@ -127,7 +127,7 @@ class HomeComponent extends React.Component {
         </div>
         <div className="stats-container">
           <Table title="Last payments: " content={latestPayments} />
-          <Table title="Spensive payments:" content={expensivePayments} />
+          <Table title="Expensive payments:" content={expensivePayments} />
         </div>
       </div>
     );

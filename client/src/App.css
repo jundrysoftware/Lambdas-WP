@@ -1,10 +1,21 @@
+:root{
+  --amplify-primary-color: #232526;
+}
 .full-container{
   width: 90%;
   margin: 30px auto;
 }
-/* .navbar-custom{
-  background: linear-gradient(90deg,#123a55,#4a3e79)
-} */
+.navbar-custom{
+  background: #232526;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, #414345, #232526) !important;  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to right, #414345, #232526) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+.hydrated{
+  background: #485563;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to left, #29323c, #485563) !important;  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #29323c, #485563) !important; /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
 
 .prepayment-item-expansion-content form{
   margin-top: 20px;
@@ -115,14 +126,14 @@
 .categories-container .category-item p{
   margin: 0px;
   font-weight: 300;
-  font-size: 13px;
+  font-size: 14px;
   color: rgb(231, 231, 231);
 }
 .categories-container .category-item p span{
   color: white;
   margin: 0px;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
 }
 .home-container .container-timming-buton button:first-child{  
   border-radius: 5px 0px 0px 5px;
