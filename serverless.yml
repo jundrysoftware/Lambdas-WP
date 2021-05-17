@@ -201,7 +201,7 @@ functions:
     name: AutomationServices-EmailChecker-${opt:stage}
     events:
       - schedule:
-          name: "cw-start-email-checker"
+          # name: "cw-start-email-checker"
           description: "Function to connecto to Gmail :D"
           rate: rate(20 minutes)
           enabled: true
@@ -247,3 +247,13 @@ functions:
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       SECRET_KEY: ${file(./config/${opt:stage}.json):SECRET_KEY}
+
+  HideNoAcceptedPayments:
+    handler: AutomationServices/AutoHidePayments/handler.start
+    description: "Function to hide payments not accepted after 30 days"
+    name: AutomationServices-HideNoAcceptedPayments-${opt:stage}
+    events:
+      - schedule:
+          name: "cw-hide-payments-not-accepted"
+          rate: rate(1 day)
+          enabled: true
