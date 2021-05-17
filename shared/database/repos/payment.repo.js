@@ -114,3 +114,51 @@ module.exports.getByMonth = async (userId) => {
   ]);
   return result; 
 };
+
+module.exports.getMostSpensiveDay = async (date) => {
+  if(!date) throw new Error('Date is mandatory')
+  await connect()
+
+  const result = await  Payments.aggregate([{
+    $match: { 
+      createdAt: { 
+        $gte: date.toDate() 
+      }, 
+      isAccepted: true 
+    }
+  },{
+    $group: {
+       _id: {
+            dayOfWeek: { $dayOfWeek: "$createdAt" },
+        },
+        total: {$sum: "$amount"}
+      }  
+  }, {
+      $project: {
+          dayOfWeek: "$_id.dayOfWeek",
+         _id: 0, 
+         total: 1               
+      } 
+  },{
+   $project: {
+     "dayOfWeek":  { 
+           $switch: {
+            branches: [
+               { case: { $eq: ["$dayOfWeek", 1] }, then: "Monday" },
+               { case: { $eq: ["$dayOfWeek", 2] }, then: "Tuesday" }, 
+               { case: { $eq: ["$dayOfWeek", 3] }, then: "Wednesday" }, 
+               { case: { $eq: ["$dayOfWeek", 4] }, then: "Thursday" }, 
+               { case: { $eq: ["$dayOfWeek", 5] }, then: "Friday" }, 
+               { case: { $eq: ["$dayOfWeek", 6] }, then: "Saturday" }, 
+               { case: { $eq: ["$dayOfWeek", 7] }, then: "Sunday" }, 
+           ],
+            default: "Weird day" 
+          },
+      },
+     total: 1   
+  }    
+  },{
+    $sort: {"total": -1}   
+  }])
+  return result
+}

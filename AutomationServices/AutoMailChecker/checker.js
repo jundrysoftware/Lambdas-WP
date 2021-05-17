@@ -1,7 +1,7 @@
 require('dotenv').config()
 const imaps = require('imap-simple')
 const utils = require('./utils')
-const config = require('./configs')
+const config = require('../configs')
 const moment = require('moment')
 const { createMultiple: createMultiplesPayments } = require('../../shared/database/repos/payment.repo')
 const { getBanks } = require('../../shared/database/repos/bank.repo');
@@ -21,7 +21,7 @@ const start = async (event, context) => {
     const user = await getUser({ emails: config.imap.user })
     if (!user)
         throw new Error('Users are not configured yet, please create the user document')
-
+    
     console.info('Getting Banks Config')
     const banks = await getBanks({});
 
