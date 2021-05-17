@@ -1,6 +1,4 @@
 import React from "react";
-import "./App.css";
-import "emerald-ui/lib/styles.css";
 import Navbar from "./components/navbar";
 import PrepaymentContainer from "./components/prePaymentContainer";
 import GraphContainer from "./components/GraphsContainer";
@@ -11,8 +9,8 @@ import constants from "./constants";
 import Amplify, { Auth, API } from 'aws-amplify';
 import awsconfig from './aws-exports';
 import { AmplifySignOut, withAuthenticator } from '@aws-amplify/ui-react';
-
-
+import "emerald-ui/lib/styles.css";
+import "./App.css";
 Amplify.configure({
   ...awsconfig,
   API: {
