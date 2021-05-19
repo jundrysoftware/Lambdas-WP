@@ -231,6 +231,7 @@ functions:
       TWILIO_ACCESS_TOKEN:  ${file(./config/${opt:stage}.json):TWILIO_ACCESS_TOKEN}
       TWILIO_SECTRET_KEY:  ${file(./config/${opt:stage}.json):TWILIO_SECTRET_KEY}
 
+  ##Deprecated function since DataCredito updates the backend 
   DataCreditoScraper:
     handler: AutomationServices/DataCreditoScraper/scraper.start
     name: AutomationServices-DataCreditoScraper-${opt:stage}
@@ -241,7 +242,7 @@ functions:
           name: "cw-start-datacredito-scraper"
           description: "Function to scraper datacredito data"
           rate: cron(0 0 15,30 * ? *) # Every Fifteen days, some entities take a time to report updates
-          enabled: true
+          enabled: false
     layers:
       - arn:aws:lambda:${self:provider.region}:764866452798:layer:chrome-aws-lambda:22
     environment:

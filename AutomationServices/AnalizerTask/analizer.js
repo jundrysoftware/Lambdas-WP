@@ -9,7 +9,8 @@ const AUTH_TOKEN = process.env.TWILIO_SECTRET_KEY
 /**
  * Sandbox whatsapp number. please change if you have your own number phone
  */
-const NUMBER_FROM = 'whatsapp:+14155238886' 
+// const NUMBER_FROM = 'whatsapp:+14155238886' 
+const NUMBER_FROM = '+17863475105' 
 
 const transformNumber = (number) => Intl.NumberFormat('es-co').format(number)
 
@@ -50,7 +51,7 @@ module.exports.start = async (event) => {
         await client.messages.create({
             body: BodyToWhatsApp,
             from: NUMBER_FROM,
-            to: `whatsapp:${phoneNumber}`
+            to: `${phoneNumber}`
         })
     }
     
