@@ -6,7 +6,7 @@ const moment = require('moment')
 const { createMultiple: createMultiplesPayments } = require('../../shared/database/repos/payment.repo')
 const { getBanks } = require('../../shared/database/repos/bank.repo');
 const { getUser } = require('../../shared/database/repos/user.repo');
-
+const crypto = require('../../shared/utils/crypto')
 String.prototype.splice = function (idx, rem, str) {
     return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
 };
@@ -16,39 +16,60 @@ const {
 } = process.env
 
 const start = async (event, context) => {
+    event = { 
+        Records:[{
+            body: JSON.stringify({"createdAt":"2021-05-20T00:59:08.811Z","data":{"userId":"5fd625470e1f299d3a6c73ad","checkAllDates":true}})
+        }] 
+    }
     console.info('Getting User Config')
+    const [ { data }, ...rest ] = event.Records.map(sqsMessage => {
+        try {
+            return JSON.parse(sqsMessage.body);
+        } catch (e) {
+            console.error(e);
+        }
+    });
+    
     // This function open the mongo connection
-    const user = await getUser({ emails: config.imap.user })
-    if (!user)
-        throw new Error('Users are not configured yet, please create the user document')
+    const user = await getUser({ _id: data.userId })
+    const { settings } = user
+    if (!user || !settings || !settings.email)
+        throw new Error('Users and email are not configured yet, please create the user document for user ' + data.userId)
     
     console.info('Getting Banks Config')
-    const banks = await getBanks({});
+    const banks = await getBanks({ user: data.userId });
 
     if (!banks)
         throw new Error('Banks are not configured yet, please create the bank documents')
 
-    console.info('Connecting to email')
-    const connection = await imaps.connect(config)
+    console.info('Connecting to email'); 
+    config.user = crypto.decrypt(settings.email.user);
+    config.password = crypto.decrypt(settings.email.key); 
+
+    const connection = await imaps.connect(config);
 
     for (let index = 0; index < banks.length; index++) {
         const bank = banks[index];
         console.info(`Openning ${bank.folder}`)
         await connection.openBox(bank.folder)
-        const date = moment()
-            .subtract(MINUTES_AGO_SEARCH, 'minutes')
-            .toISOString()
-        console.log('=== STARTING SOMETHING ===', {
+        const date = data.checkAllDates 
+            ? moment().subtract(5, 'years').toISOString()
+            : moment()
+                .subtract(MINUTES_AGO_SEARCH, 'minutes')
+                .toISOString()
+        console.log('=== SEARCHING EMAILS ===', {
             startDate: date,
             now: moment().toISOString()
         })
         const GranularData = []
 
-        const searchValues = [
-            'UNSEEN',
+        const searchValues = [];
+        
+        if(!data.checkAllDates) searchValues.push('UNSEEN');
+        searchValues.push(
             ['SINCE', date],
-            ['SUBJECT', bank.subject],
-        ]
+            ['SUBJECT', bank.subject]
+        ); 
         const results = await connection.search(searchValues, {
             bodies: ['HEADER', 'TEXT'],
             markSeen: true

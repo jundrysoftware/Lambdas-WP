@@ -77,6 +77,28 @@ const userSchema = mongoose.Schema(
                         trim: true
                     }
                 }
+            }, 
+            email: {
+                user: {
+                    iv: {
+                        type: String,
+                        trim: true
+                    },
+                    content: {
+                        type: String,
+                        trim: true
+                    }
+                },
+                key: {
+                    iv: {
+                        type: String,
+                        trim: true
+                    },
+                    content: {
+                        type: String,
+                        trim: true
+                    }
+                },
             }
         }
     },

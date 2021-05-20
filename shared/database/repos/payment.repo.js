@@ -182,5 +182,6 @@ module.exports.usersHavePayments = async (userList = []) => {
     }
   }]; 
   const result = await Payments.aggregate(aggregation)
+  await destroy()
   return result
 }

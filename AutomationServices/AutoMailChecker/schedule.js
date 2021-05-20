@@ -11,19 +11,20 @@ const SQS = new AWS.SQS(SQS_CONFIGS)
 module.exports.start = async ()=>{
     const usersToSchedule = await userRepo.getUsers({}); 
     if(!usersToSchedule || !usersToSchedule.length)
-        throw Error('No users found in schema'); 
-
+    throw Error('No users found in schema'); 
+    
     const userIds = usersToSchedule.map(user=>user._id); 
     const BankUserInformation = await paymentRepo.usersHavePayments(userIds); 
-    const messagesToQueue = BankUserInformation.map(user=>({
+    
+    const messagesToQueue = userIds.map(id=>({
         MessageBody: JSON.stringify({
             createdAt: (new Date()).toISOString(), 
             data: {
-                userId: user.id,
-                checkAllDates: !user.hasPayments
+                userId: id,
+                checkAllDates: !BankUserInformation.find(user=>user.id == id)
             }
         }),
-        Id: user.id + '_event'
+        Id: id + '_event'
     }));
 
     const sqsResult = await SQS.sendMessageBatch({
