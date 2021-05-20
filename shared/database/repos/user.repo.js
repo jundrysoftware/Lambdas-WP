@@ -40,6 +40,19 @@ module.exports.getUser = async (searchCriteria, configs = { }) => {
         return {};
     }
 };
+module.exports.getUsers = async (searchCriteria, configs = { }) => {
+    try {
+        await connect();
+        const result = await Users.find(searchCriteria);
+        return result; 
+    } catch (e) {
+        console.error(e);
+        try {
+            await destroy()
+        } catch (error) {}
+        return {};
+    }
+};
 
 module.exports.updateUser = async (User) => {
     throw new Error(`Not implemented Yet`)

@@ -30,8 +30,6 @@ functions:
   TwilioIncommingMessage:
     handler: AutomationServices/WhatsAppBot/handlerIncommingMessage.handler
     name: TwilioIncommingMessage-lambda-${opt:stage}
-    environment:
-      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
     events:
       - http:
           path: "/whatsapp/webhook/"
@@ -243,8 +241,6 @@ functions:
           description: "Function to scraper datacredito data"
           rate: cron(0 0 15,30 * ? *) # Every Fifteen days, some entities take a time to report updates
           enabled: false
-    layers:
-      - arn:aws:lambda:${self:provider.region}:764866452798:layer:chrome-aws-lambda:22
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       SECRET_KEY: ${file(./config/${opt:stage}.json):SECRET_KEY}
@@ -258,3 +254,28 @@ functions:
           name: "cw-hide-payments-not-accepted"
           rate: rate(1 day)
           enabled: true
+
+  ScheduleUsersToCheckEmails:
+    handler: AutomationServices/AutoMailChecker/schedule.start
+    name: AutomationServices-ScheduleUsers-${opt:stage}
+    events: 
+      - schedule: 
+          enabled: true
+          rate: rate(20 minutes)
+    environment: 
+      USER_SCHEDULE_SQS_URL: 
+        Ref: EmailUsersQueue
+
+    # events: 
+    #   - sqs: 
+    #     arn: 
+    #       Fn::GetAtt:
+    #         - EmailUsersQueue
+    #         - Arn
+
+resources:
+  Resources:
+    EmailUsersQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "email-users-checker"
