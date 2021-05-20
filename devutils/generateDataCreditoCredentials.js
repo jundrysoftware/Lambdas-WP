@@ -1,7 +1,7 @@
 const { encrypt } = require('../shared/utils/crypto')
 
-const username = "flavioaandres24@gmail.com";
-const password = "vfaxynnqedzcoezh";
+const username = "none";
+const password = "none";
 const secondpass = "secondpass";
 
 
