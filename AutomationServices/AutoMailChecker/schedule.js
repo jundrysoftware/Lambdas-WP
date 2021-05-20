@@ -14,23 +14,32 @@ module.exports.start = async ()=>{
     throw Error('No users found in schema'); 
     
     const userIds = usersToSchedule.map(user=>user._id); 
-    const BankUserInformation = await paymentRepo.usersHavePayments(userIds); 
     
-    const messagesToQueue = userIds.map(id=>({
+    const messagesToQueue = usersToSchedule.map(({_id: id, settings})=>({
         MessageBody: JSON.stringify({
             createdAt: (new Date()).toISOString(), 
             data: {
                 userId: id,
-                checkAllDates: !BankUserInformation.find(user=>user.id == id)
+                checkAllDates: settings.email.checkedEvent
             }
         }),
         Id: id + '_event'
     }));
-
+    
     const sqsResult = await SQS.sendMessageBatch({
         QueueUrl: process.env.USER_SCHEDULE_SQS_URL,
         Entries: messagesToQueue,
     }).promise()
+
+    try {
+        await userRepo.updateUser({
+            _id: { $in: userIds },
+        }, {
+            $set: { 'settings.email.checkedEvent': true }
+        });
+    } catch (error) {
+        console.error(error)
+    }
 
     return sqsResult; 
 }

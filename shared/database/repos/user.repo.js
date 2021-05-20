@@ -40,6 +40,7 @@ module.exports.getUser = async (searchCriteria, configs = { }) => {
         return {};
     }
 };
+
 module.exports.getUsers = async (searchCriteria, configs = { }) => {
     try {
         await connect();
@@ -54,8 +55,9 @@ module.exports.getUsers = async (searchCriteria, configs = { }) => {
     }
 };
 
-module.exports.updateUser = async (User) => {
-    throw new Error(`Not implemented Yet`)
+module.exports.updateUser = async (filter, newDocument) => {
+    await connect()
+    return userModel.updateMany(filter, newDocument); 
 };
 
 module.exports.createCategory = async (userCriteria, category) =>{

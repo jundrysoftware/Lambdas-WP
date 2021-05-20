@@ -53,7 +53,7 @@ const start = async (event, context) => {
         console.info(`Openning ${bank.folder}`)
         await connection.openBox(bank.folder)
         const date = data.checkAllDates 
-            ? moment().subtract(5, 'years').toISOString()
+            ? moment().subtract(1.5, 'years').toISOString()
             : moment()
                 .subtract(MINUTES_AGO_SEARCH, 'minutes')
                 .toISOString()

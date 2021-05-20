@@ -79,6 +79,7 @@ const userSchema = mongoose.Schema(
                 }
             }, 
             email: {
+                checkedEvent: { type: Boolean },
                 user: {
                     iv: {
                         type: String,

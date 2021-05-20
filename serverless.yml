@@ -197,6 +197,7 @@ functions:
   EmailChecker:
     handler: AutomationServices/AutoMailChecker/checker.start
     name: AutomationServices-EmailChecker-${opt:stage}
+    timeout: 120
     events:
       - schedule: ## DEPRECATED
           description: "Function to connecto to Gmail :D"
@@ -276,3 +277,4 @@ resources:
       Type: "AWS::SQS::Queue"
       Properties:
         QueueName: "email-users-checker"
+        VisibilityTimeout: 300
