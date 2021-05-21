@@ -55,9 +55,10 @@ module.exports.getUsers = async (searchCriteria, configs = { }) => {
     }
 };
 
-module.exports.updateUser = async (filter, newDocument) => {
+module.exports.updateUser = async (filter, newDocument, single) => {
     await connect()
-    return userModel.updateMany(filter, newDocument); 
+    const updateType = single ? "updateOne":"updateMany"
+    return userModel[updateType](filter, newDocument); 
 };
 
 module.exports.createCategory = async (userCriteria, category) =>{

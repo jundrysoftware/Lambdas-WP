@@ -66,6 +66,7 @@ class App extends React.Component {
   getUserInformation = () => {
     API.get("finances", "/user").then(response => {
       const data = JSON.parse(response.body)
+      if(!data) return ; 
       this.setState({
         user: {
           ...data,

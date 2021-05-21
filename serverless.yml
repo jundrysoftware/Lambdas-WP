@@ -9,6 +9,14 @@ package:
     - node_modules/chrome-aws-lambda/** # The function is provided by the layer
     - devutils/**
 
+custom: 
+  ArnSQSEmails: 
+    dev: ${file(./config/${opt:stage}.json):USER_SCHEDULE_SQS_URL}
+    test: 
+      Ref: EmailUsersQueue
+    prod: 
+      Ref: EmailUsersQueue
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -90,6 +98,26 @@ functions:
       - http:
           path: /boxflow/stats
           method: GET
+          integration: lambda
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
+  UpdateEmailCredentials:
+    handler: API/Functions/Users.updateEmailSourceCredentials
+    name: StatsRepo-get-${opt:stage}
+    events:
+      - http:
+          path: /user/settings/email  
+          method: PUT
           integration: lambda
           cors:
             - enabled: true
@@ -268,8 +296,7 @@ functions:
           enabled: true
           rate: rate(20 minutes)
     environment: 
-      USER_SCHEDULE_SQS_URL: 
-        Ref: EmailUsersQueue
+      USER_SCHEDULE_SQS_URL: ${self:custom.ArnSQSEmails.${opt:stage, self:provider.stage}}
 
 resources:
   Resources:

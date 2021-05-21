@@ -1,14 +1,16 @@
 import React from "react";
-import { Label } from "emerald-ui/lib/";
+import { Label, Button, IconButton } from "emerald-ui/lib/";
 import NewCategoryModal from "./NewCategoryModal";
 import BanksComponent from "./BanksComponents";
+import UpdateEmailCredentials from './UpdateEmailCredentials'
 import { API } from 'aws-amplify'
 class ProfileContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       user: {},
-      banks: []
+      banks: [],
+      showConfigEmailModal: false
     };
   }
   onCreateCategoryClick = (evt) => {
@@ -41,9 +43,12 @@ class ProfileContainer extends React.Component {
           close={this.onCloseCategoryModal} />
         <div className="user-information-container">
           <div className="user-emails">
-            <h2>Emails registrados: </h2>
+            <h2>Source Email: </h2>
             {user.emails && user.emails.map((item) => (
-              <p key={item} className="text-muted">{item}</p>
+              <div  key={item} className="email-config-cont">
+                <p className="text-muted" style={{display: 'inline-block', marginRight: 10}}>{item}</p>
+                <IconButton onClick={()=>this.setState({showConfigEmailModal: true})} title="Configure your source email..." icon="settings"> Settings </IconButton>
+              </div>
             ))}
           </div>
           <div className="user-phones">
@@ -73,6 +78,7 @@ class ProfileContainer extends React.Component {
             }
           </div>
         </div>
+        <UpdateEmailCredentials close={()=>this.setState({showConfigEmailModal: false})} show={this.state.showConfigEmailModal}/>
       </div>
     );
   }
