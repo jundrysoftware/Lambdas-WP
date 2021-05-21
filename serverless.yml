@@ -232,6 +232,7 @@ functions:
             Fn::GetAtt:
               - EmailUsersQueue
               - Arn
+          batchSize: 1
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}

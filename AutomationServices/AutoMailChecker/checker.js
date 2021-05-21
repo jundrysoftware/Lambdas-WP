@@ -45,7 +45,7 @@ const start = async (event, context) => {
         if (!banks)
             throw new Error('Banks are not configured yet, please create the bank documents')
 
-        console.info('Connecting to email');
+        console.info('Connecting to email of user ' + data.userId);
 
         config.user = crypto.decrypt(settings.email.user);
         config.password = crypto.decrypt(settings.email.key);
