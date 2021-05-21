@@ -16,11 +16,12 @@ const {
 } = process.env
 
 const start = async (event, context) => {
-    event = { 
-        Records:[{
-            body: JSON.stringify({"createdAt":"2021-05-20T00:59:08.811Z","data":{"userId":"5fd625470e1f299d3a6c73ad","checkAllDates":true}})
-        }] 
-    }
+    
+    // event = { 
+    //     Records:[{
+    //         body: JSON.stringify({"createdAt":"2021-05-20T00:59:08.811Z","data":{"userId":"5fd625470e1f299d3a6c73ad","checkAllDates":true}})
+    //     }] 
+    // }
     console.info('Getting User Config')
     const [ { data }, ...rest ] = event.Records.map(sqsMessage => {
         try {
@@ -32,6 +33,7 @@ const start = async (event, context) => {
     
     // This function open the mongo connection
     const user = await getUser({ _id: data.userId })
+    if(!user) return "No user found"
     const { settings } = user
     if (!user || !settings || !settings.email)
         throw new Error('Users and email are not configured yet, please create the user document for user ' + data.userId)

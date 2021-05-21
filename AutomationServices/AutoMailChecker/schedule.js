@@ -9,7 +9,7 @@ const SQS_CONFIGS = {
 const SQS = new AWS.SQS(SQS_CONFIGS)
 
 module.exports.start = async ()=>{
-    const usersToSchedule = await userRepo.getUsers({}); 
+    const usersToSchedule = await userRepo.getUsers({ 'settings.email': { $exists: true } }); 
     if(!usersToSchedule || !usersToSchedule.length)
     throw Error('No users found in schema'); 
     
@@ -20,7 +20,7 @@ module.exports.start = async ()=>{
             createdAt: (new Date()).toISOString(), 
             data: {
                 userId: id,
-                checkAllDates: settings.email.checkedEvent
+                checkAllDates: !settings.email.checkedEvent
             }
         }),
         Id: id + '_event'
