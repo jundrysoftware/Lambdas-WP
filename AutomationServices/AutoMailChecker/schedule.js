@@ -9,7 +9,10 @@ const SQS_CONFIGS = {
 const SQS = new AWS.SQS(SQS_CONFIGS)
 
 module.exports.start = async ()=>{
-    const usersToSchedule = await userRepo.getUsers({ 'settings.email': { $exists: true } }); 
+    const usersToSchedule = await userRepo.getUsers({ 
+        'settings.email.user': { $exists: true }, 
+        'settings.email.key': { $exists: true },
+    }); 
     if(!usersToSchedule || !usersToSchedule.length)
     throw Error('No users found in schema'); 
     

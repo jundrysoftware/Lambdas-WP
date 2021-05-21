@@ -227,10 +227,6 @@ functions:
     name: AutomationServices-EmailChecker-${opt:stage}
     timeout: 120
     events:
-      - schedule: ## DEPRECATED
-          description: "Function to connecto to Gmail :D"
-          rate: rate(20 minutes)
-          enabled: false 
       - sqs: 
           arn:
             Fn::GetAtt:
