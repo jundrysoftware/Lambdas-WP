@@ -18,7 +18,7 @@ const {
 const start = async (event, context) => {
     if(process.env.NODE_ENV === 'dev')
         event = { 
-            Records:[{ body: JSON.stringify({"createdAt":"2021-05-20T00:59:08.811Z","data":{"userId":"5fd625470e1f299d3a6c73ad","checkAllDates":false}}) }] 
+            Records:[{ body: JSON.stringify({"createdAt":"2021-05-20T00:59:08.811Z","data":{"userId":"60a725161d8bbb000909c69c","checkAllDates":false}}) }] 
         }
     try {
         console.info('Getting User Config')
@@ -39,7 +39,7 @@ const start = async (event, context) => {
         console.info('Getting Banks Config')
         const banks = user.banks
 
-        if (!banks)
+        if (!banks || !banks.length)
             throw new Error('Banks are not configured yet, please create the bank documents')
 
         console.info('Connecting to email of user ' + data.userId);
