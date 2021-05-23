@@ -17,18 +17,9 @@ module.exports.getUser = async (searchCriteria, configs = { }) => {
     try {
         await connect();
         if(configs.banks) 
-            return Users.aggregate([{
-                $match: {
-                    ...searchCriteria
-                }
-            }, {
-                $lookup: {
-                    from: 'banks',
-                    localField: '_id',
-                    foreignField: 'user',
-                    as: 'banks'
-                  }
-            }])
+            return Users.find({
+                ...searchCriteria
+            }).populate('bank')
         
         const result = await Users.findOne(searchCriteria);
         return result; 
@@ -37,7 +28,7 @@ module.exports.getUser = async (searchCriteria, configs = { }) => {
         try {
             await destroy()
         } catch (error) {}
-        return {};
+        return configs.banks ? [] : {};
     }
 };
 

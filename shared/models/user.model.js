@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const BankModel = require('./bank.model')
 const { encrypt } = require('../utils/crypto')
 
 const userSchema = mongoose.Schema(
@@ -101,7 +102,12 @@ const userSchema = mongoose.Schema(
                     }
                 },
             }
-        }
+        }, 
+        banks: [{
+            type: mongoose.Types.ObjectId,
+            ref: BankModel,
+            autopopulate: true 
+        }]
     },
     {
         timestamps: true
@@ -109,11 +115,18 @@ const userSchema = mongoose.Schema(
 )
 
 /**
+ * Plugins
+ */
+
+userSchema.plugin(require('mongoose-autopopulate'));
+
+/**
  * Check if email is taken
  * @param {string} email - The user's email
  * @param {ObjectId} [excludeUserId] - The id of the user to be excluded
  * @returns {Promise<boolean>}
  */
+
 userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
     const user = await this.findOne({ email, _id: { $ne: excludeUserId } });
     return !!user;
@@ -142,4 +155,4 @@ userSchema.pre('save', async function (next) {
 /**
  * @typedef User
  */
-module.exports = mongoose.model('User', userSchema) 
+module.exports = mongoose.model('user', userSchema) 

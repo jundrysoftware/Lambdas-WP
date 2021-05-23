@@ -16,31 +16,28 @@ const {
 } = process.env
 
 const start = async (event, context) => {
-
-    // event = { 
-    //     Records:[{
-    //         body: JSON.stringify({"createdAt":"2021-05-20T00:59:08.811Z","data":{"userId":"5fd625470e1f299d3a6c73ad","checkAllDates":false}})
-    //     }] 
-    // }
+    if(process.env.NODE_ENV === 'dev')
+        event = { 
+            Records:[{ body: JSON.stringify({"createdAt":"2021-05-20T00:59:08.811Z","data":{"userId":"5fd625470e1f299d3a6c73ad","checkAllDates":false}}) }] 
+        }
     try {
         console.info('Getting User Config')
-        const [{ data }, ...rest] = event.Records.map(sqsMessage => {
+        const [{ data }, ...rest] = event.Records.map(sqsMessage => { //Just 1 event per execution
             try {
                 return JSON.parse(sqsMessage.body);
             } catch (e) {
                 console.error(e);
             }
         });
-
         // This function open the mongo connection
-        const user = await getUser({ _id: data.userId })
+        const [ user ] = await getUser({ _id: data.userId },  {banks: true})
         if (!user) return "No user found"
         const { settings } = user
         if (!user || !settings || !settings.email || !settings.email.user || !settings.email.key)
             throw new Error('Users and email are not configured yet, please create the user document for user ' + data.userId)
 
         console.info('Getting Banks Config')
-        const banks = await getBanks({ user: data.userId });
+        const banks = user.banks
 
         if (!banks)
             throw new Error('Banks are not configured yet, please create the bank documents')

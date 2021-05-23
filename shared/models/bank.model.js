@@ -22,7 +22,6 @@ const BankSchema = mongoose.Schema(
         },
         ignore_phrase: { type: String, default: null },
         index_value: { type: Number },
-        user: { type: mongoose.Types.ObjectId, required: true }
     },
     {
         timestamps: true,
@@ -33,6 +32,6 @@ const BankSchema = mongoose.Schema(
 /**
  * @typedef Bank
  */
-const Bank = mongoose.model('Bank', BankSchema);
+const Bank = mongoose.model('bank', BankSchema);
 
 module.exports = Bank;
