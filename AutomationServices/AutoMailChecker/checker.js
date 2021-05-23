@@ -32,8 +32,9 @@ const start = async (event, context) => {
         // This function open the mongo connection
         const [ user ] = await getUser({ _id: data.userId },  {banks: true})
         if (!user) return "No user found"
+
         const { settings } = user
-        if (!user || !settings || !settings.email || !settings.email.user || !settings.email.key)
+        if (!user || !settings || !settings.email || !settings.email.user || !settings.email.user.content || !settings.email.key)
             throw new Error('Users and email are not configured yet, please create the user document for user ' + data.userId)
 
         console.info('Getting Banks Config')
@@ -44,9 +45,8 @@ const start = async (event, context) => {
 
         console.info('Connecting to email of user ' + data.userId);
 
-        config.user = crypto.decrypt(settings.email.user);
-        config.password = crypto.decrypt(settings.email.key);
-
+        config.imap.user = crypto.decrypt(settings.email.user);
+        config.imap.password = crypto.decrypt(settings.email.key);
         const connection = await imaps.connect(config);
 
         for (let index = 0; index < banks.length; index++) {
