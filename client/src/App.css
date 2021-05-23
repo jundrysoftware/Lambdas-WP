@@ -219,3 +219,15 @@ background: linear-gradient(to right, #414345, #232526) !important; /* W3C, IE 1
     display: none; 
   }
 }
+
+/*PROFILE CONTAINER*/
+
+.bank-list-header{
+  display: flex;
+  justify-content: space-between;
+  margin: 10px auto; 
+}
+
+.bank-list-header h2{
+  margin: 0;
+}

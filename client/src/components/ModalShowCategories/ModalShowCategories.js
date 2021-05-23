@@ -9,7 +9,6 @@ const ModalShowCategories = (props) => {
     return (
         <Modal
             onHide={props.close}
-            // show={props.show}
             show={props.show}
         >
             <Modal.Header closeButton={true}>
@@ -17,7 +16,7 @@ const ModalShowCategories = (props) => {
             </Modal.Header>
             <Modal.Body>
                 {data.map(item => (
-                    <div className="modal-category-item">
+                    <div key={item._id} className="modal-category-item">
                         <div className="category-item-desc">
                             { item.category === 'withdrawal' 
                                 ? item.description.substring(0, 25) 

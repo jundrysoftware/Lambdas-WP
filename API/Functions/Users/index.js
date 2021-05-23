@@ -185,3 +185,23 @@ module.exports.updateEmailSourceCredentials = async (event)=>{
   }
 
 }
+
+module.exports.addBankToUser = async (event) =>{
+  const body = event.body
+  const { bankId } = body
+  const {
+    cognitoPoolClaims
+  } = event
+
+  const {
+    sub
+  } = cognitoPoolClaims
+
+  if(!bankId) return { statusCode: 400, body: JSON.stringify({error: 'Missing bank to add'}) }
+
+  const result = await UserRepo.updateUser({ sub }, { $addToSet: { banks: bankId } } );
+  
+  return {
+    statusCode: result ? 200 : 409, 
+  }
+}

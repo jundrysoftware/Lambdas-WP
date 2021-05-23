@@ -152,6 +152,47 @@ functions:
             arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
             claims:
               - sub
+  
+  AddBankToUser:
+    handler: API/Functions/Users.addBankToUser
+    name: UserRepo-banks-PUT-${opt:stage}
+    events:
+      - http:
+          path: /user/banks
+          method: patch
+          integration: lambda
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
+  GetBanks: 
+    handler: API/Functions/Banks.getBanks
+    name: BanksRepo-GET-${opt:stage}
+    events:
+      - http:
+          path: /banks
+          method: GET
+          integration: lambda
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
 
   CheckUserSecret:
     handler: API/Functions/Users.checkSecretKey

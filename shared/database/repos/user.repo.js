@@ -21,13 +21,9 @@ module.exports.getUser = async (searchCriteria, configs = { }) => {
                 ...searchCriteria
             }).populate('bank')
         
-        const result = await Users.findOne(searchCriteria);
-        return result; 
+        return Users.findOne(searchCriteria);
     } catch (e) {
         console.error(e);
-        try {
-            await destroy()
-        } catch (error) {}
         return configs.banks ? [] : {};
     }
 };
@@ -39,9 +35,6 @@ module.exports.getUsers = async (searchCriteria, configs = { }) => {
         return result; 
     } catch (e) {
         console.error(e);
-        try {
-            await destroy()
-        } catch (error) {}
         return {};
     }
 };
