@@ -54,13 +54,14 @@ const start = async (event, context) => {
             console.info(`Openning ${bank.folder}`)
             await connection.openBox(bank.folder)
             const date = data.checkAllDates
-                ? moment().subtract(1.5, 'years').toISOString()
+                ? moment().subtract(1, 'years').toISOString()
                 : moment()
                     .subtract(MINUTES_AGO_SEARCH, 'minutes')
                     .toISOString()
             console.log('=== SEARCHING EMAILS ===', {
                 startDate: date,
-                now: moment().toISOString()
+                now: moment().toISOString(), 
+                user: data.userId
             })
             const GranularData = []
 
@@ -70,7 +71,7 @@ const start = async (event, context) => {
             searchValues.push(
                 ['SINCE', date],
                 ['SUBJECT', bank.subject]
-            );
+                );
             const results = await connection.search(searchValues, {
                 bodies: ['HEADER', 'TEXT'],
                 markSeen: true
