@@ -66,6 +66,7 @@ class App extends React.Component {
   getUserInformation = () => {
     API.get("finances", "/user").then(response => {
       const data = JSON.parse(response.body)
+      if(!data) return ; 
       this.setState({
         user: {
           ...data,
@@ -123,7 +124,7 @@ class App extends React.Component {
           {this.state.navbarActive === "home" && <HomeContainer />}
           {this.state.navbarActive === "datacredit" && <DataCreditContainer />}
           {this.state.navbarActive === "profile" && (
-            <ProfileContainer user={this.state.user} banks={this.state.banks} saveCategory={this.addCategoryToState} />
+            <ProfileContainer getUserInformation={this.getUserInformation} user={this.state.user} banks={this.state.banks} saveCategory={this.addCategoryToState} />
           )}
         </div>
       </React.Fragment>

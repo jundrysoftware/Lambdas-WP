@@ -17,32 +17,32 @@ module.exports.getUser = async (searchCriteria, configs = { }) => {
     try {
         await connect();
         if(configs.banks) 
-            return Users.aggregate([{
-                $match: {
-                    ...searchCriteria
-                }
-            }, {
-                $lookup: {
-                    from: 'banks',
-                    localField: '_id',
-                    foreignField: 'user',
-                    as: 'banks'
-                  }
-            }])
+            return Users.find({
+                ...searchCriteria
+            }).populate('bank')
         
-        const result = await Users.findOne(searchCriteria);
+        return Users.findOne(searchCriteria);
+    } catch (e) {
+        console.error(e);
+        return configs.banks ? [] : {};
+    }
+};
+
+module.exports.getUsers = async (searchCriteria, configs = { }) => {
+    try {
+        await connect();
+        const result = await Users.find(searchCriteria);
         return result; 
     } catch (e) {
         console.error(e);
-        try {
-            await destroy()
-        } catch (error) {}
         return {};
     }
 };
 
-module.exports.updateUser = async (User) => {
-    throw new Error(`Not implemented Yet`)
+module.exports.updateUser = async (filter, newDocument, single) => {
+    await connect()
+    const updateType = single ? "updateOne":"updateMany"
+    return userModel[updateType](filter, newDocument); 
 };
 
 module.exports.createCategory = async (userCriteria, category) =>{

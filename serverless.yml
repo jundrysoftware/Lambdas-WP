@@ -9,6 +9,14 @@ package:
     - node_modules/chrome-aws-lambda/** # The function is provided by the layer
     - devutils/**
 
+custom: 
+  ArnSQSEmails: 
+    dev: ${file(./config/${opt:stage}.json):USER_SCHEDULE_SQS_URL}
+    test: 
+      Ref: EmailUsersQueue
+    prod: 
+      Ref: EmailUsersQueue
+
 provider:
   name: aws
   runtime: nodejs12.x
@@ -30,8 +38,6 @@ functions:
   TwilioIncommingMessage:
     handler: AutomationServices/WhatsAppBot/handlerIncommingMessage.handler
     name: TwilioIncommingMessage-lambda-${opt:stage}
-    environment:
-      BODY_REQUEST: ${file(./config/${opt:stage}.json):BODY_REQUEST}
     events:
       - http:
           path: "/whatsapp/webhook/"
@@ -105,6 +111,26 @@ functions:
             arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
             claims:
               - sub
+  UpdateEmailCredentials:
+    handler: API/Functions/Users.updateEmailSourceCredentials
+    name: UpdateEmailCredentials-put-${opt:stage}
+    events:
+      - http:
+          path: /user/settings/email  
+          method: PUT
+          integration: lambda
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
 
   GetUser:
     handler: API/Functions/Users.getUserInformation
@@ -112,6 +138,47 @@ functions:
     events:
       - http:
           path: /user
+          method: GET
+          integration: lambda
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
+  
+  AddBankToUser:
+    handler: API/Functions/Users.addBankToUser
+    name: UserRepo-banks-PUT-${opt:stage}
+    events:
+      - http:
+          path: /user/banks
+          method: patch
+          integration: lambda
+          cors:
+            - enabled: true
+            - origin: "*"
+            - headers: "Access-Control-Allow-Origin"
+          response:
+            headers:
+              Access-Control-Allow-Origin: "'*'"
+          authorizer:
+            name: authorizer
+            arn: ${file(./config/${opt:stage}.json):USER_POOL_ARN}
+            claims:
+              - sub
+  GetBanks: 
+    handler: API/Functions/Banks.getBanks
+    name: BanksRepo-GET-${opt:stage}
+    events:
+      - http:
+          path: /banks
           method: GET
           integration: lambda
           cors:
@@ -199,12 +266,14 @@ functions:
   EmailChecker:
     handler: AutomationServices/AutoMailChecker/checker.start
     name: AutomationServices-EmailChecker-${opt:stage}
+    timeout: 120
     events:
-      - schedule:
-          # name: "cw-start-email-checker"
-          description: "Function to connecto to Gmail :D"
-          rate: rate(20 minutes)
-          enabled: true
+      - sqs: 
+          arn:
+            Fn::GetAtt:
+              - EmailUsersQueue
+              - Arn
+          batchSize: 1
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       EMAIL_PASSWORD: ${file(./config/${opt:stage}.json):EMAIL_PASSWORD}
@@ -243,8 +312,6 @@ functions:
           description: "Function to scraper datacredito data"
           rate: cron(0 0 15,30 * ? *) # Every Fifteen days, some entities take a time to report updates
           enabled: false
-    layers:
-      - arn:aws:lambda:${self:provider.region}:764866452798:layer:chrome-aws-lambda:22
     environment:
       EMAIL_USERNAME: ${file(./config/${opt:stage}.json):EMAIL_USERNAME}
       SECRET_KEY: ${file(./config/${opt:stage}.json):SECRET_KEY}
@@ -258,3 +325,21 @@ functions:
           name: "cw-hide-payments-not-accepted"
           rate: rate(1 day)
           enabled: true
+
+  ScheduleUsersToCheckEmails:
+    handler: AutomationServices/AutoMailChecker/schedule.start
+    name: AutomationServices-ScheduleUsers-${opt:stage}
+    events: 
+      - schedule: 
+          enabled: true
+          rate: rate(20 minutes)
+    environment: 
+      USER_SCHEDULE_SQS_URL: ${self:custom.ArnSQSEmails.${opt:stage, self:provider.stage}}
+
+resources:
+  Resources:
+    EmailUsersQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "email-users-checker"
+        VisibilityTimeout: 300

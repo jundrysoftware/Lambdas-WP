@@ -25,7 +25,7 @@ module.exports.getAllByDate = async ({ userId, date }) => {
     },
     { amount: 1, description: 1, createdAt: 1, category: 1, isAccepted: 1 }
   ).sort({ createdAt: -1 });
-  return result; 
+  return result;
 };
 
 //get all prepayments without category
@@ -63,7 +63,7 @@ module.exports.updatePayment = async (Payment) => {
 
 module.exports.getByCategories = async (userId) => {
   await connect()
-  const result =  await Payments.aggregate([
+  const result = await Payments.aggregate([
     {
       $match: {
         user: userId,
@@ -112,53 +112,76 @@ module.exports.getByMonth = async (userId) => {
       },
     },
   ]);
-  return result; 
+  return result;
 };
 
 module.exports.getMostSpensiveDay = async (date) => {
-  if(!date) throw new Error('Date is mandatory')
+  if (!date) throw new Error('Date is mandatory')
   await connect()
 
-  const result = await  Payments.aggregate([{
-    $match: { 
-      createdAt: { 
-        $gte: date.toDate() 
-      }, 
-      isAccepted: true 
-    }
-  },{
-    $group: {
-       _id: {
-            dayOfWeek: { $dayOfWeek: "$createdAt" },
-        },
-        total: {$sum: "$amount"}
-      }  
-  }, {
-      $project: {
-          dayOfWeek: "$_id.dayOfWeek",
-         _id: 0, 
-         total: 1               
-      } 
-  },{
-   $project: {
-     "dayOfWeek":  { 
-           $switch: {
-            branches: [
-               { case: { $eq: ["$dayOfWeek", 1] }, then: "Monday" },
-               { case: { $eq: ["$dayOfWeek", 2] }, then: "Tuesday" }, 
-               { case: { $eq: ["$dayOfWeek", 3] }, then: "Wednesday" }, 
-               { case: { $eq: ["$dayOfWeek", 4] }, then: "Thursday" }, 
-               { case: { $eq: ["$dayOfWeek", 5] }, then: "Friday" }, 
-               { case: { $eq: ["$dayOfWeek", 6] }, then: "Saturday" }, 
-               { case: { $eq: ["$dayOfWeek", 7] }, then: "Sunday" }, 
-           ],
-            default: "Weird day" 
-          },
+  const result = await Payments.aggregate([{
+    $match: {
+      createdAt: {
+        $gte: date.toDate()
       },
-     total: 1   
-  }    
-  },{
-    $sort: {"total": -1}   
+      isAccepted: true
+    }
+  }, {
+    $group: {
+      _id: {
+        dayOfWeek: { $dayOfWeek: "$createdAt" },
+      },
+      total: { $sum: "$amount" }
+    }
+  }, {
+    $project: {
+      dayOfWeek: "$_id.dayOfWeek",
+      _id: 0,
+      total: 1
+    }
+  }, {
+    $project: {
+      "dayOfWeek": {
+        $switch: {
+          branches: [
+            { case: { $eq: ["$dayOfWeek", 1] }, then: "Monday" },
+            { case: { $eq: ["$dayOfWeek", 2] }, then: "Tuesday" },
+            { case: { $eq: ["$dayOfWeek", 3] }, then: "Wednesday" },
+            { case: { $eq: ["$dayOfWeek", 4] }, then: "Thursday" },
+            { case: { $eq: ["$dayOfWeek", 5] }, then: "Friday" },
+            { case: { $eq: ["$dayOfWeek", 6] }, then: "Saturday" },
+            { case: { $eq: ["$dayOfWeek", 7] }, then: "Sunday" },
+          ],
+          default: "Weird day"
+        },
+      },
+      total: 1
+    }
+  }, {
+    $sort: { "total": -1 }
   }])
+  return result
+}
+
+module.exports.usersHavePayments = async (userList = []) => {
+  await connect()
+  const aggregation = [{
+    $match: { user: { $in: userList } }
+  }, {
+    $group: { _id: '$user', count: { $sum: 1 } }
+  }, {
+    $project: { 
+      id: '$_id', 
+      hasPayments: {
+        $cond: {
+          if: { $gte: ["$count", 1] },
+          then: true,
+          else: false
+        }
+      }
+    }
+  }]; 
+  const result = await Payments.aggregate(aggregation)
+  await destroy()
   return result
 }
