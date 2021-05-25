@@ -12,7 +12,7 @@ String.prototype.splice = function (idx, rem, str) {
 };
 
 const {
-    MINUTES_AGO_SEARCH = '30'
+    MINUTES_AGO_SEARCH = '360'
 } = process.env
 
 const start = async (event, context) => {
