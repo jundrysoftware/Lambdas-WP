@@ -1,6 +1,7 @@
 service: personal-interface
 plugins:
   - serverless-offline
+  - serverless-iam-roles-per-function
 
 package:
   exclude:
@@ -11,7 +12,7 @@ package:
 
 custom: 
   ArnSQSEmails: 
-    dev: ${file(./config/${opt:stage}.json):USER_SCHEDULE_SQS_URL}
+    dev: ${file(./config/dev.json):USER_SCHEDULE_SQS_URL}
     test: 
       Ref: EmailUsersQueue
     prod: 
@@ -329,6 +330,16 @@ functions:
   ScheduleUsersToCheckEmails:
     handler: AutomationServices/AutoMailChecker/schedule.start
     name: AutomationServices-ScheduleUsers-${opt:stage}
+    iamRoleStatementsName: write-sqs-finances-${opt:stage}-role
+    iamRoleStatements: 
+      - Effect: 'Allow'
+        Action: 
+          - 'sqs:SendMessage'
+          - 'sqs:SendMessageBatch'
+        Resource:
+          Fn::GetAtt:
+            - EmailUsersQueue
+            - Arn
     events: 
       - schedule: 
           enabled: true

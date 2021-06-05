@@ -30,6 +30,7 @@
     "aws-sdk": "^2.910.0",
     "puppeteer": "^5.5.0",
     "serverless": "^1.78.1",
+    "serverless-iam-roles-per-function": "^3.2.0-e97ab49",
     "serverless-offline": "^6.5.0"
   }
 }
