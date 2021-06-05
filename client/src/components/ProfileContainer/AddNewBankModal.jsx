@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Button, SearchableSelect } from 'emerald-ui/lib'
 import { API } from 'aws-amplify'
+import swalert from 'sweetalert2'
 
 const AddNewBankModal = (props) => {
     const [loading, setLoading] = useState(false)
@@ -13,8 +14,10 @@ const AddNewBankModal = (props) => {
         }).then(data=>{
             choosedBank = ""
             props.onBankAdded()
+            swalert.fire('Bank added', 'Your new bank has been addeed and we are now tracking it', 'success')
         }).catch(e=>{
             console.error(e); 
+            swalert.fire('Something went wrong', 'Take and screenshot of this and share with the administrator: ' + e.message, 'error')
         }).finally(()=>{
             setLoading(false)
             props.close()
