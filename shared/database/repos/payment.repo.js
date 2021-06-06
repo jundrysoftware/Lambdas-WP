@@ -61,16 +61,16 @@ module.exports.updatePayment = async (Payment) => {
   await destroy()
 };
 
-module.exports.getByCategories = async (userId) => {
+module.exports.getByCategories = async (userId, date) => {
   await connect()
+  const match = {
+      user: userId,
+      type: "EXPENSE",
+      isAccepted: true,
+  }
+  if(date) match.createdAt = { $gte: new Date(date) }; 
   const result = await Payments.aggregate([
-    {
-      $match: {
-        user: userId,
-        type: "EXPENSE",
-        isAccepted: true,
-      },
-    },
+    { $match: { ...match } }, 
     {
       $group: {
         _id: { $toLower: "$category" },
