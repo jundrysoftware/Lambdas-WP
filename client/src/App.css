@@ -36,20 +36,22 @@ background: linear-gradient(to right, #414345, #232526) !important; /* W3C, IE 1
   width: 100%;
   justify-content: center;
 }
-.home-container .container-timming-buton{
+.container-timming-buton{
   margin: 0px auto; 
+  display: block;
+  width: 300px;
 }
-.home-container .container-timming-buton button{
+.container-timming-buton button{
   border: 1px solid grey;
   padding: 5px 10px;
 }
-.home-container .container-timming-buton button.selected{
+.container-timming-buton button.selected{
   background-color: rgb(204, 204, 204);
 }
-.home-container .container-timming-buton button:hover{
+.container-timming-buton button:hover{
   background-color: rgb(223, 223, 223);
 }
-.home-container .categories-container{
+.categories-container{
   display: flex;
   height: 20%;
   justify-content: center;

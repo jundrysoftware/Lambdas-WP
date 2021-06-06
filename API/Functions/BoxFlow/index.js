@@ -14,8 +14,8 @@ const processMonthlyMetrics = async (userId) => {
   })
   return results
 }
-const processCategoryMetrics = async (userId) => {
-  let results = await PaymentRepo.getByCategories(userId);
+const processCategoryMetrics = async (userId, date, groupBy = 'month') => {
+  let results = await PaymentRepo.getByCategories(userId, date);
   if (!results || !results.length) results = []
   results = results.map(item => {
     const {
@@ -23,8 +23,13 @@ const processCategoryMetrics = async (userId) => {
       purchases
     } = item
     const group = _.groupBy(purchases, i => {
-      const date = `${i.date.toISOString()}`
-      return date.substring(0, 7)
+      if(i.date){
+        const date = `${i.date.toISOString()}`
+        const groupByLength = groupBy === 'month' 
+          ? 7 // by month
+          : 10 // by day 
+        return date.substring(0, groupByLength)
+      }
     })
     const parsed = Object.keys(group).map(month => {
       return {
@@ -84,15 +89,16 @@ module.exports.get = async (event, context, callback) => {
   const { sub } = cognitoPoolClaims
   const metricType = queryParams && queryParams.metricType ? queryParams.metricType : 'month';
   const date = queryParams && queryParams.date ? queryParams.date : moment().subtract(1, 'month').toString()
+  const groupBy = queryParams && queryParams.groupBy ? queryParams.groupBy : null
   try {
     // This function open the mongo connection
     const user = await getUser({ sub })
     switch (metricType) {
       case 'month':
-        results = await processMonthlyMetrics(user._id)
+        results = await processMonthlyMetrics(user._id, date)
         break;
       case 'category':
-        results = await processCategoryMetrics(user._id, date)
+        results = await processCategoryMetrics(user._id, queryParams.date ? date : undefined, groupBy)
         break;
       case 'home':
         results = await processHomeMetrics(user._id, date)
