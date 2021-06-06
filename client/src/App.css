@@ -201,6 +201,9 @@ background: linear-gradient(to right, #414345, #232526) !important; /* W3C, IE 1
 .user-phones p{
   margin-left: 10px;
 }
+.user-categories h2{
+  display: block;
+}
 .user-categories .eui-label{
   margin-right: 5px;
   margin-top: 5px; 
@@ -208,6 +211,9 @@ background: linear-gradient(to right, #414345, #232526) !important; /* W3C, IE 1
 }
 .add-new-category{
   cursor: pointer;
+}
+.user-budgets-category p{
+  color: grey; 
 }
 .eui-text-field + .eui-text-field{
   margin-top: 10px !important;

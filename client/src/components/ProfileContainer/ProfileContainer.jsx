@@ -1,5 +1,5 @@
 import React from "react";
-import { Label, Icon, Button, IconButton } from "emerald-ui/lib/";
+import { Label, Icon, Button, IconButton,  } from "emerald-ui/lib/";
 import NewCategoryModal from "./NewCategoryModal";
 import BanksComponent from "./BanksComponents";
 import UpdateEmailCredentials from './UpdateEmailCredentials'
@@ -76,6 +76,10 @@ class ProfileContainer extends React.Component {
               {" "}
               ➕ Add {" "}
             </Label>
+          </div>
+          <div className="user-budgets-category">
+            <h2>Category Budgets:</h2>
+            <p>Welcome to this new functionality, you'll be able to set budgets to your categories, everything a new payment is processed, we'll let you know if you've exceded your budget to the category</p>
           </div>
         </div>
         <div className="banks-information">
