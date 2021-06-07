@@ -33,7 +33,7 @@ class App extends React.Component {
       user: {},
       banks: [],
       prepayments: [],
-      navbarActive: "home",
+      navbarActive: "profile",
       token: null
     };
   }

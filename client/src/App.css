@@ -239,3 +239,8 @@ background: linear-gradient(to right, #414345, #232526) !important; /* W3C, IE 1
 .bank-list-header h2{
   margin: 0;
 }
+
+.add-new-budget{
+  cursor: pointer;
+  display: inline-block;
+}
