@@ -3,6 +3,7 @@ import Table from "./TableComponent";
 import moment from "moment";
 import formatCash from '../utils/formatCash';
 import ModalShowCategories from './ModalShowCategories/ModalShowCategories'
+import SelectorTimming from './SelectorTiming'
 import { API } from 'aws-amplify'
 
 class HomeComponent extends React.Component {
@@ -94,26 +95,10 @@ class HomeComponent extends React.Component {
           data={ choosedCategoryModal ? totalByCategory[choosedCategoryModal]: [] }
           close={()=>this.setState({ showCategoriesModal: null, choosedCategoryModal: null })}
         />
-        <div className="container-timming-buton">
-          <button
-            onClick={(evt) => this.onChangeDate(evt, "week")}
-            className={timeAgo === "week" ? "selected" : ""}
-          >
-            Last Week
-          </button>
-          <button
-            onClick={(evt) => this.onChangeDate(evt, "month")}
-            className={timeAgo === "month" ? "selected" : ""}
-          >
-            Last Month
-          </button>
-          <button
-            onClick={(evt) => this.onChangeDate(evt, "year")}
-            className={timeAgo === "year" ? "selected" : ""}
-          >
-            Last Year
-          </button>
-        </div>
+        <SelectorTimming 
+          onChangeDate={this.onChangeDate}
+          timeAgo={timeAgo}
+        />
         <div className="categories-container">
           {
             categories.map((item, index) => (

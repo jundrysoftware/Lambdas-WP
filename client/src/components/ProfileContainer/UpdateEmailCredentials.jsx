@@ -1,6 +1,7 @@
 import React from 'react'
 import { Modal, Button, Steps, TextField } from 'emerald-ui/lib'
 import { API } from 'aws-amplify'
+import swalert from 'sweetalert2'
 
 const UpdateEmailCredentials = (props) => {
     const [step, setStep] = React.useState(1)
@@ -25,11 +26,14 @@ const UpdateEmailCredentials = (props) => {
             setLoading(false)
             props.close()
             setPassword("")
+            swalert.fire('Email Updated', '', 'success')
+            setStep(1)
         }).catch(e=>{
             console.error(e)
             setLoading(false)
             setPassword("")
             props.close()
+            swalert.fire('Something went wrong', 'Take and screenshot of this and share with the administrator: ' + e.message, 'error')
         })
     }
     return (

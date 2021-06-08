@@ -1,6 +1,7 @@
 service: personal-interface
 plugins:
   - serverless-offline
+  - serverless-iam-roles-per-function
 
 package:
   exclude:
@@ -9,10 +10,10 @@ package:
     - node_modules/chrome-aws-lambda/** # The function is provided by the layer
     - devutils/**
 
-custom:
-  ArnSQSEmails:
-    dev: ${file(./config/${opt:stage}.json):USER_SCHEDULE_SQS_URL}
-    test:
+custom: 
+  ArnSQSEmails: 
+    dev: ${file(./config/dev.json):USER_SCHEDULE_SQS_URL}
+    test: 
       Ref: EmailUsersQueue
     prod:
       Ref: EmailUsersQueue
@@ -328,8 +329,18 @@ functions:
   ScheduleUsersToCheckEmails:
     handler: AutomationServices/AutoMailChecker/schedule.start
     name: AutomationServices-ScheduleUsers-${opt:stage}
-    events:
-      - schedule:
+    iamRoleStatementsName: write-sqs-finances-${opt:stage}-role
+    iamRoleStatements: 
+      - Effect: 'Allow'
+        Action: 
+          - 'sqs:SendMessage'
+          - 'sqs:SendMessageBatch'
+        Resource:
+          Fn::GetAtt:
+            - EmailUsersQueue
+            - Arn
+    events: 
+      - schedule: 
           enabled: true
           rate: rate(20 minutes)
     environment:
