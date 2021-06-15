@@ -3,7 +3,9 @@ import Table from "./TableComponent";
 import moment from "moment";
 import formatCash from '../utils/formatCash';
 import ModalShowCategories from './ModalShowCategories/ModalShowCategories'
+import ModalAddIncome from './ModalAddIncome/ModalAddIncome'
 import SelectorTimming from './SelectorTiming'
+import { Label } from 'emerald-ui/lib'
 import { API } from 'aws-amplify'
 
 class HomeComponent extends React.Component {
@@ -16,7 +18,10 @@ class HomeComponent extends React.Component {
       expensivePayments: [],
       totalByCategory: [],
       prepayments: [],
-      categories: [] 
+      categories: [],
+      latestIncomes: [],
+      showSpinningCategoryModal: false,
+      showAddIncomeModal: false,
     };
   }
   isRenderd = false;
@@ -26,7 +31,7 @@ class HomeComponent extends React.Component {
       .then(response => {
         const data = JSON.parse(response.body)
         const categories = [];
-        const { latestPayments, expensivePayments, prepayments, totalByCategory } = data;
+        const { latestPayments, expensivePayments, prepayments, totalByCategory, latestIncomes } = data;
         Object.keys(totalByCategory).forEach((key) => {
           const catName = key
           const total = totalByCategory[key].reduce((prev, curr) => prev + curr.amount, 0)
@@ -42,6 +47,7 @@ class HomeComponent extends React.Component {
         })
         if (this._isMounted) {
           this.setState({
+            latestIncomes,
             latestPayments,
             expensivePayments,
             prepayments,
@@ -73,10 +79,37 @@ class HomeComponent extends React.Component {
 
   showCategoriesContainer(evt, category) {
     if (evt) evt.preventDefault();
-    this.setState({ showCategoriesModal: true, choosedCategoryModal: category }); 
-    
+    this.setState({ showCategoriesModal: true, choosedCategoryModal: category });
+
   }
 
+
+  onSaveIncome = (income) => {
+    this.setState({
+      showSpinningIncomeModal: true
+    })
+    API.post('finances', '/incomes', {
+      body: {
+        ...income
+      }
+    }).then(result => {
+      this.setState((state, props) => {
+        return {
+          showAddIncomeModal: false,
+          showSpinningIncomeModal: false,
+          latestIncomes: [{ description: income.description, amount: income.amount, category: income.category }, ...state.latestIncomes]
+        }
+      })
+    }).catch(err => console.error(err))
+  }
+
+  onCreateIncomeClick = (evt) => {
+    this.setState({
+      showAddIncomeModal: true
+    })
+  }
+
+  onCloseIncomesModal = (evt) => this.setState({ showAddIncomeModal: false })
 
   render() {
     const {
@@ -86,23 +119,35 @@ class HomeComponent extends React.Component {
       categories,
       choosedCategoryModal,
       totalByCategory,
+      latestIncomes,
     } = this.state;
+
+    const { user } = this.props
+
     return (
       <div className="home-container">
-        <ModalShowCategories 
-          show={ this.state.showCategoriesModal }
-          category={ this.state.choosedCategoryModal }
-          data={ choosedCategoryModal ? totalByCategory[choosedCategoryModal]: [] }
-          close={()=>this.setState({ showCategoriesModal: null, choosedCategoryModal: null })}
+        <ModalShowCategories
+          show={this.state.showCategoriesModal}
+          category={this.state.choosedCategoryModal}
+          data={choosedCategoryModal ? totalByCategory[choosedCategoryModal] : []}
+          close={() => this.setState({ showCategoriesModal: null, choosedCategoryModal: null })}
         />
-        <SelectorTimming 
+
+        <ModalAddIncome
+          save={this.onSaveIncome}
+          loading={this.state.showSpinningIncomeModal}
+          show={this.state.showAddIncomeModal}
+          close={this.onCloseIncomesModal}
+          categories={user.categories} />
+
+        <SelectorTimming
           onChangeDate={this.onChangeDate}
           timeAgo={timeAgo}
         />
         <div className="categories-container">
           {
             categories.map((item, index) => (
-              <button onClick={(evt)=>this.showCategoriesContainer(evt, item.name)} className="category-item" key={`item-${index}`}>
+              <button onClick={(evt) => this.showCategoriesContainer(evt, item.name)} className="category-item" key={`item-${index}`}>
                 <p>
                   {item.name}: <span>{formatCash(item.total)}</span>
                 </p>
@@ -113,6 +158,14 @@ class HomeComponent extends React.Component {
         <div className="stats-container">
           <Table title="Last payments: " content={latestPayments} />
           <Table title="Expensive payments:" content={expensivePayments} />
+          <Table title={
+            <>
+              Last Incomes {' '}
+              <Label onClick={this.onCreateIncomeClick} className="add-new-category" color="primary">
+                ➕ Add
+              </Label>
+            </>
+          } content={latestIncomes} />
         </div>
       </div>
     );

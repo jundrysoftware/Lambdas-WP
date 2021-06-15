@@ -15,10 +15,12 @@ class GraphContainer extends Component {
   }
   isGraphRendered = false;
   ChartsRendered = {}
-  renderGraph = ({ type = "bar", series, categories, xaxis = {}, dataLabels = {}, plotOptions = {} }, id) => {
+
+  renderGraph = ({ type = "bar", series, categories, xaxis = {}, dataLabels = {}, plotOptions = {}, chartOptions = {} }, id) => {
     const basics = {
       chart: {
         type,
+        ...chartOptions
       },
     };
     if (!this.ChartsRendered[id]) {
@@ -32,10 +34,10 @@ class GraphContainer extends Component {
           },
           ...xaxis
         },
-        yaxis:{
+        yaxis: {
           formatter: formatCash
         },
-        dataLabels, 
+        dataLabels,
         plotOptions,
         stroke: {
           curve: "smooth",
@@ -51,8 +53,11 @@ class GraphContainer extends Component {
 
   getMonthlyMetrics = () =>
     API.get("finances", '/boxflow/stats').then(response => {
-      const data = JSON.parse(response.body)
-      const [amounts, months] = data.reduce(
+      const { payments, incomes } = JSON.parse(response.body)
+
+
+      // Payments
+      const [paymentsAmount, paymentsMonths] = payments.reduce(
         (prev, current) => {
           prev[0].push(current.total.toFixed(2));
           prev[1].push(current.month);
@@ -60,13 +65,14 @@ class GraphContainer extends Component {
         },
         [[], []]
       );
+
       this.renderGraph(
         {
-          categories: months,
+          categories: paymentsMonths,
           series: [
             {
               name: "Gastos",
-              data: amounts,
+              data: paymentsAmount,
             },
           ],
           plotOptions: {
@@ -80,7 +86,7 @@ class GraphContainer extends Component {
           dataLabels: {
             enabled: true,
             formatter: function (val) {
-              return formatCash(val).replace(',00', '') 
+              return formatCash(val).replace(',00', '')
             },
             offsetY: -20,
             style: {
@@ -91,18 +97,67 @@ class GraphContainer extends Component {
         },
         "graph-montly"
       );
+
+      // Incomes vs Payments
+      const [incomesAmounts, incomesMonths] = incomes.reduce(
+        (prev, current) => {
+          prev[0].push(current.total.toFixed(2));
+          prev[1].push(current.month);
+          return prev;
+        },
+        [[], []]
+      );
+
+      this.renderGraph(
+        {
+          categories: incomesMonths,
+          series: [
+            {
+              name: "Ingresos",
+              data: incomesAmounts,
+            },
+            {
+              name: "Gastos",
+              data: paymentsAmount.slice(paymentsMonths.indexOf(incomesMonths[0])),
+            },
+          ],
+          plotOptions: {
+            bar: {
+              borderRadius: 10,
+              dataLabels: {
+                position: 'top',
+              },
+            }
+          },
+          chartOptions: {
+            stacked: true,
+            stackType: '100%'
+          },
+          dataLabels: {
+            enabled: true,
+            offsetY: -20,
+            style: {
+              fontSize: '12px',
+              colors: ["#054b80"]
+            }
+          },
+        },
+        "graph-montly-incomes-vs-payemnts"
+      );
     });
 
   getMonthlyCategories = (date, period = 'month') =>
-    API.get('finances', '/boxflow/stats', { queryStringParameters: { metricType: 'category', date, groupBy: period  } })
+    API.get('finances', '/boxflow/stats', { queryStringParameters: { metricType: 'category', date, groupBy: period } })
       .then((res) => {
-        const data = JSON.parse(res.body);
+        const { payments, incomes } = JSON.parse(res.body);
+
+        // Payments
         const monthsArray = [];
-        const datasets = data.map((item) => {
+        const datasetsPayemnts = payments.map((item) => {
           return {
             name: item.category,
             data: item.monthly.map((i) => {
-              const date = period != 'month' 
+              const date = period != 'month'
                 ? i.month.substring(5, 10)
                 : i.month
               monthsArray.push(date);
@@ -113,10 +168,10 @@ class GraphContainer extends Component {
             }),
           };
         });
-        const uniqueMonths = [...new Set(monthsArray)].sort();
-        const fill = datasets.map((serie) => {
+        const uniqueMonthsPayments = [...new Set(monthsArray)].sort();
+        const fillPayments = datasetsPayemnts.map((serie) => {
           const existentMonth = serie.data.map((i) => i.x);
-          const filled = uniqueMonths
+          const filled = uniqueMonthsPayments
             .map((month) => {
               if (!existentMonth.includes(month)) {
                 return {
@@ -139,25 +194,76 @@ class GraphContainer extends Component {
 
         this.renderGraph(
           {
-            categories: uniqueMonths,
+            categories: uniqueMonthsPayments,
             type: "line",
-            series: fill,
+            series: fillPayments,
           },
           "graph-category-monthly"
         );
+
+        // Incomes
+        const monthsArrayIncomes = [];
+        const datasetsIncomes = incomes.map((item) => {
+          return {
+            name: item.category,
+            data: item.monthly.map((i) => {
+              const date = period != 'month'
+                ? i.month.substring(5, 10)
+                : i.month
+              monthsArrayIncomes.push(date);
+              return {
+                x: date,
+                y: i.total.toFixed(2),
+              };
+            }),
+          };
+        });
+        const uniqueMonthsIncomes = [...new Set(monthsArrayIncomes)].sort();
+        const fillIncomes = datasetsIncomes.map((serie) => {
+          const existentMonth = serie.data.map((i) => i.x);
+          const filled = uniqueMonthsIncomes
+            .map((month) => {
+              if (!existentMonth.includes(month)) {
+                return {
+                  x: month,
+                  y: 0,
+                };
+              }
+            })
+            .filter((i) => i);
+          const joined = [...filled, ...serie.data].sort((a, b) => {
+            if (a.x > b.x) return 1;
+            if (a.x < b.x) return -1;
+            return 0;
+          });
+          return {
+            ...serie,
+            data: joined,
+          };
+        });
+
+        this.renderGraph(
+          {
+            categories: uniqueMonthsIncomes,
+            type: "line",
+            series: fillIncomes,
+          },
+          "graph-category-monthly-incomes"
+        );
       })
       .catch((err) => console.error(err));
+
 
   componentDidMount = () => {
     this.getMonthlyMetrics();
     this.getMonthlyCategories();
   };
 
-  onChangeDate = (e,period) => {
+  onChangeDate = (e, period) => {
     const date = moment().subtract(1, period).toISOString()
-    const grpupBy = period === 'year' 
+    const grpupBy = period === 'year'
       ? 'month'
-      : 'day'; 
+      : 'day';
     this.getMonthlyCategories(date, grpupBy)
     this.setState({
       timeAgo: period
@@ -174,12 +280,23 @@ class GraphContainer extends Component {
         />
         <div className="container-graphs-general">
           <div className="graph-monthly-container">
-            <h2>Total monthly</h2>
+            <h2>Total monthly payemnts</h2>
             <div id="graph-montly"></div>
           </div>
           <div className="graph-category-monthly-container">
-            <h2>Categories by month</h2>
+            <h2>Payments Categories by month</h2>
             <div id="graph-category-monthly"></div>
+          </div>
+        </div>
+
+        <div className="container-graphs-general">
+          <div className="graph-monthly-container">
+            <h2>Total Incomes vs Payments monthly</h2>
+            <div id="graph-montly-incomes-vs-payemnts"></div>
+          </div>
+          <div className="graph-category-monthly-container">
+            <h2>Incomes Categories by month</h2>
+            <div id="graph-category-monthly-incomes"></div>
           </div>
         </div>
       </div>
