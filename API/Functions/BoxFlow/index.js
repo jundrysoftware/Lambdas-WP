@@ -94,13 +94,13 @@ const processCategoryMetrics = async (userId, date, groupBy = 'month') => {
 
 const processHomeMetrics = async (userId, date) => {
 
-  const payments = await PaymentRepo.getAllByDate({ userId, date })
+  let payments = await PaymentRepo.getAllByDate({ userId, date })
   const incomes = await IncomeRepo.getAllByDate({ userId, date });
 
   let latestPayments = [], expensivePayments = [], totalByCategory = [], acceptedPayments = [], prepayments = [], latestIncomes = []
   //Split types
 
-  payments.filter(payment => payment.isAccepted);
+  payments= payments.filter(payment => payment.isAccepted);
 
   //prepayments 
   prepayments = prepayments.slice(0, 10)
