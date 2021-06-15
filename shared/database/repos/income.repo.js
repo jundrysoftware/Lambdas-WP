@@ -5,12 +5,12 @@ const { connect, destroy } = require("../mongo");
 
 module.exports.create = async (incomeBody) => {
   try {
-      await connect();
-      await Income.create(incomeBody);
+    await connect();
+    await Income.create(incomeBody);
   } catch (error) {
-      console.error(error)
+    console.error(error)
   } finally {
-      await destroy();
+    await destroy();
   }
 }
 
@@ -22,7 +22,6 @@ module.exports.getAllByDate = async ({ userId, date }) => {
     {
       createdAt: { $gte: new Date(date) },
       user: userId,
-      type: "INCOME",
     },
     { amount: 1, description: 1, createdAt: 1, category: 1 }
   ).sort({ createdAt: -1 });
@@ -55,12 +54,12 @@ module.exports.getByCategories = async (userId) => {
     {
       $group: {
         _id: { $toLower: "$category" },
-        incoming: { $addToSet: { amount: "$amount", date: "$createdAt" } },
+        incomes: { $addToSet: { amount: "$amount", date: "$createdAt" } },
       },
     },
     {
       $project: {
-        incoming: "$incoming",
+        incomes: "$incomes",
         category: "$_id",
         _id: false,
       },
@@ -68,6 +67,12 @@ module.exports.getByCategories = async (userId) => {
   ]);
   return result
 };
+
+module.exports.getAll = async (userId) => {
+  await connect()
+  const result = await Income.find({ user: userId });
+  return result;
+}
 
 module.exports.getByMonth = async (userId) => {
   await connect()

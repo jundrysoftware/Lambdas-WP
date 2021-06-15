@@ -9,7 +9,8 @@ module.exports.get = async (event, context, callback) => {
     sub
   } = cognitoPoolClaims
   try {
-    results = await IncomeRepo.getByMonth({ sub });
+    const { _id } = await getUser({ sub })
+    results = await IncomeRepo.getAll(_id);
   } catch (error) {
     return {
       statusCode: "500",
@@ -70,6 +71,7 @@ module.exports.put = async (event, context, callback) => {
 
 module.exports.post = async (event, context, callback) => {
   const { body: bodyString, cognitoPoolClaims } = event
+
   const {
     description,
     category,
@@ -82,16 +84,17 @@ module.exports.post = async (event, context, callback) => {
   } = cognitoPoolClaims
 
   try {
-    if (!id || !description || !category || !amount || !source) return { statusCode: 400, body: JSON.stringify({ message: 'Bad request' }) }
+    if ( !description || !amount || !source ) return { statusCode: 400, body: JSON.stringify({ message: 'Bad request' }) }
 
     const user = await getUser({ sub })
     const data = await IncomeRepo.create({
-      id,
       user: user._id,
       amount,
       description,
-      category
+      category,
+      source
     })
+
     await detroyMongoConnection()
     return {
       statusCode: 200,
