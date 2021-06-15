@@ -13,26 +13,26 @@ module.exports.create = async (UserBody = []) => {
     }
 };
 
-module.exports.getUser = async (searchCriteria, configs = { }) => {
+module.exports.getUser = async (searchCriteria, configs = {}, projections = {}) => {
     try {
         await connect();
-        if(configs.banks) 
+        if (configs.banks)
             return Users.find({
                 ...searchCriteria
             }).populate('bank')
-        
-        return Users.findOne(searchCriteria);
+
+        return Users.findOne(searchCriteria, { ...projections});
     } catch (e) {
         console.error(e);
         return configs.banks ? [] : {};
     }
 };
 
-module.exports.getUsers = async (searchCriteria, configs = { }) => {
+module.exports.getUsers = async (searchCriteria, configs = {}) => {
     try {
         await connect();
         const result = await Users.find(searchCriteria);
-        return result; 
+        return result;
     } catch (e) {
         console.error(e);
         return {};
@@ -41,12 +41,12 @@ module.exports.getUsers = async (searchCriteria, configs = { }) => {
 
 module.exports.updateUser = async (filter, newDocument, single) => {
     await connect()
-    const updateType = single ? "updateOne":"updateMany"
-    return userModel[updateType](filter, newDocument); 
+    const updateType = single ? "updateOne" : "updateMany"
+    return userModel[updateType](filter, newDocument);
 };
 
-module.exports.createCategory = async (userCriteria, category) =>{
-    if(!category.value || !category.label || !Object.keys(userCriteria).length) return null; 
+module.exports.createCategory = async (userCriteria, category) => {
+    if (!category.value || !category.label || !Object.keys(userCriteria).length) return null;
 
     await connect()
     const result = await userModel.updateOne({ ...userCriteria }, {
@@ -54,5 +54,18 @@ module.exports.createCategory = async (userCriteria, category) =>{
             categories: { ...category }
         }
     })
-    return result.nModified > 0 
+    return result.nModified > 0
+}
+
+module.exports.addChat = async (userCriteria, chat) => {
+    if (!chat.id) return null;
+
+    await connect()
+    const result = await userModel.updateOne({ ...userCriteria }, {
+        $push: {
+            "settings.bots.chats": { ...chat }
+        }
+    })
+
+    return result.nModified > 0
 }

@@ -35,15 +35,15 @@ const userSchema = mongoose.Schema(
             }
         ],
         categories: [{
-            label: String, 
+            label: String,
             value: String,
             type: {
-                 type: String,
-                 index: false,
-                 required: true,
-                 trim: true,
-                 enum: [ 'INCOME', 'EXPENSE' ]
-            } 
+                type: String,
+                index: false,
+                required: true,
+                trim: true,
+                enum: ['INCOME', 'EXPENSE']
+            }
         }],
         emails: [
             {
@@ -85,7 +85,7 @@ const userSchema = mongoose.Schema(
                         trim: true
                     }
                 }
-            }, 
+            },
             email: {
                 checkedEvent: { type: Boolean, default: false },
                 user: {
@@ -108,12 +108,28 @@ const userSchema = mongoose.Schema(
                         trim: true
                     }
                 },
+            },
+            bots: {
+                chats: [
+                    {
+                        type: {
+                            type: String,
+                            required: true,
+                            trim: true,
+                            enum: ['WHATSAPP', 'TELEGRAM']
+                        },
+                        id: {
+                            type: Number,
+                            required: true
+                        }
+                    }
+                ]
             }
-        }, 
+        },
         banks: [{
             type: mongoose.Types.ObjectId,
             ref: BankModel,
-            autopopulate: true 
+            autopopulate: true
         }]
     },
     {
@@ -151,15 +167,15 @@ userSchema.pre('save', async function (next) {
     if (user.isModified('setting.datacredito.password')) {
         user.setting.datacredito.password = await encrypt(user.setting.datacredito.password);
     }
-    
+
     if (user.isModified('setting.datacredito.secondpass')) {
         user.setting.datacredito.secondpass = await encrypt(user.setting.datacredito.secondpass);
     }
-    
+
     next();
 });
 
 /**
  * @typedef User
  */
-module.exports = mongoose.model('user', userSchema) 
+module.exports = mongoose.model('user', userSchema)
