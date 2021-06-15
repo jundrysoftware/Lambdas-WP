@@ -108,8 +108,6 @@ class GraphContainer extends Component {
         [[], []]
       );
 
-      
-
       this.renderGraph(
         {
           categories: incomesMonths,
@@ -120,7 +118,7 @@ class GraphContainer extends Component {
             },
             {
               name: "Gastos",
-              data: paymentsAmount,
+              data: paymentsAmount.slice(paymentsMonths.indexOf(incomesMonths[0])),
             },
           ],
           plotOptions: {
