@@ -264,6 +264,7 @@ functions:
     name: PostConfirmationUser-${opt:stage}
 
   #INCOMES
+  
   GetIncomes:
     handler: API/Functions/Incomes.get
     name: Incomes-GET-${opt:stage}
@@ -311,7 +312,7 @@ functions:
     name: Incomes-PUT-${opt:stage}
     events:
       - http:
-          path: /incomes/:income
+          path: /incomes/{income}
           method: PUT
           integration: lambda
           cors:
